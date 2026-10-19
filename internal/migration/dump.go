@@ -32,7 +32,7 @@ func Dump(ctx context.Context, options DumpOptions) (result Result, retErr error
 		return result, errors.New("source and output are required")
 	}
 	if options.CodeCache == "" {
-		options.CodeCache = "none"
+		options.CodeCache = CodeCacheNone
 	}
 	o, err := normalizeOptions(Options{CodeCache: options.CodeCache, Source: options.Source, Output: options.Output, Compression: options.Compression, Workers: options.Workers, CacheMB: options.CacheMB, Handles: options.Handles, Progress: options.Progress})
 	if err != nil {

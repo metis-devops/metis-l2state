@@ -203,7 +203,7 @@ func (s *source) prepareSnapshot(ctx context.Context, workers int, l limiter, ev
 	var x *indexes
 	var indexErr, stateErr error
 	m := newStateSnapshot()
-	m.cache = s.codeCache != "none"
+	m.cache = s.codeCache != CodeCacheNone
 	wg.Go(func() {
 		x, indexErr = s.loadIndexes(ctx, l, events)
 		if indexErr != nil {

@@ -15,6 +15,13 @@ import (
 	"github.com/metis-devops/metis-l2state/statefile"
 )
 
+const (
+	// CodeCacheMemory retains source bytecode in memory.
+	CodeCacheMemory = "memory"
+	// CodeCacheNone rereads referenced bytecode from the source.
+	CodeCacheNone = "none"
+)
+
 // Options configures OVM conversion to a state file.
 type Options struct {
 	Source, Output                                    string
@@ -256,9 +263,9 @@ func normalizeOptions(o Options) (Options, error) {
 		return o, errors.New("compression must be zstd or none")
 	}
 	if o.CodeCache == "" {
-		o.CodeCache = "memory"
+		o.CodeCache = CodeCacheMemory
 	}
-	if o.CodeCache != "memory" && o.CodeCache != "none" {
+	if o.CodeCache != CodeCacheMemory && o.CodeCache != CodeCacheNone {
 		return o, errors.New("code-cache must be memory or none")
 	}
 	return o, nil

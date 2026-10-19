@@ -524,7 +524,7 @@ func (s *source) produceAccounts(ctx context.Context, failure *runFailure, l lim
 	defer close(queue)
 	var loader *codeLoader
 	if !plan.reuseSource {
-		store := newCodeStore(s.codeCache == "memory")
+		store := newCodeStore(s.codeCache == CodeCacheMemory)
 		if plan.capture != nil {
 			store = plan.capture.codeStore
 		}

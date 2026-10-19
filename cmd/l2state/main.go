@@ -61,7 +61,7 @@ func migrateCommand(ctx context.Context, args []string, stdout, stderr io.Writer
 	f := flag.NewFlagSet("migrate", flag.ContinueOnError)
 	f.SetOutput(stderr)
 	var o migration.Options
-	f.StringVar(&o.CodeCache, "code-cache", "memory", "retain source bytecode: memory or none")
+	f.StringVar(&o.CodeCache, "code-cache", migration.CodeCacheMemory, "retain source bytecode: memory or none")
 	f.StringVar(&o.Source, "source-chaindata", "", "stopped l2geth hot LevelDB")
 	f.StringVar(&o.OVMEvents, "ovm-events", "", "RPC event JSON bound to source LastBlock (required)")
 	f.StringVar(&o.Output, "out", "", "new binary state file")
@@ -101,7 +101,7 @@ func dumpCommand(ctx context.Context, args []string, stdout, stderr io.Writer) e
 	f := flag.NewFlagSet("dump", flag.ContinueOnError)
 	f.SetOutput(stderr)
 	var o migration.DumpOptions
-	f.StringVar(&o.CodeCache, "code-cache", "none", "retain source bytecode: memory or none")
+	f.StringVar(&o.CodeCache, "code-cache", migration.CodeCacheNone, "retain source bytecode: memory or none")
 	f.StringVar(&o.Source, "source-chaindata", "", "stopped l2geth hot LevelDB")
 	f.StringVar(&o.Output, "out", "", "new binary state file")
 	quiet := commonFlags(f, &o.Compression, &o.Workers, &o.CacheMB, &o.Handles)

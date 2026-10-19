@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"strings"
 	"testing"
+
+	"github.com/metis-devops/metis-l2state/internal/migration"
 )
 
 func TestCommands(t *testing.T) {
@@ -62,9 +64,9 @@ func TestCodeCacheFlag(t *testing.T) {
 		if err := run(t.Context(), []string{command, "--help"}, &out, &stderr); err != nil {
 			t.Fatal(err)
 		}
-		expected := "memory"
+		expected := migration.CodeCacheMemory
 		if command == "dump" {
-			expected = "none"
+			expected = migration.CodeCacheNone
 		}
 		if !strings.Contains(stderr.String(), "-code-cache") || !strings.Contains(stderr.String(), "(default \""+expected+"\")") {
 			t.Fatal("missing code-cache default")

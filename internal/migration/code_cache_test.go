@@ -86,7 +86,7 @@ func TestCodeCacheModesAndAppendOrder(t *testing.T) {
 	for _, command := range []string{"migrate", "dump"} {
 		for _, codec := range []string{"none", "zstd"} {
 			var first []byte
-			for _, cache := range []string{"", "memory", "none"} {
+			for _, cache := range []string{"", CodeCacheMemory, CodeCacheNone} {
 				for _, workers := range []int{2, 16} {
 					output := filepath.Join(t.TempDir(), "state")
 					var result Result
@@ -229,7 +229,7 @@ func TestCodeReadOverlapsSameAccountStorage(t *testing.T) {
 }
 
 func TestCodeCacheReadCountsAndRereadErrors(t *testing.T) {
-	for _, cache := range []string{"memory", "none"} {
+	for _, cache := range []string{CodeCacheMemory, CodeCacheNone} {
 		t.Run(cache, func(t *testing.T) {
 			f := newFixture(t, 3, 0)
 			s, err := openSource(f.source, 16, 16)
@@ -250,7 +250,7 @@ func TestCodeCacheReadCountsAndRereadErrors(t *testing.T) {
 					t.Fatal("source code validation not deduplicated")
 				}
 			}
-			if (len(s.codes.blobs) > 0) != (cache == "memory") {
+			if (len(s.codes.blobs) > 0) != (cache == CodeCacheMemory) {
 				t.Fatal("wrong code retention")
 			}
 			evidence, err := s.convert(t.Context(), x, in, 2, make(limiter, 2))
@@ -260,7 +260,7 @@ func TestCodeCacheReadCountsAndRereadErrors(t *testing.T) {
 			encodeWalk(t, s, x, in, patches, evidence)
 			for h, n := range db.reads {
 				want := 1
-				if cache == "none" && h != f.ovmCode && h != crypto.Keccak256Hash(in.runtime) {
+				if cache == CodeCacheNone && h != f.ovmCode && h != crypto.Keccak256Hash(in.runtime) {
 					want++
 				}
 				if n != want {
@@ -284,7 +284,7 @@ func TestCodeCacheReadCountsAndRereadErrors(t *testing.T) {
 			walk, err := s.writeMigration(t.Context(), 2, make(limiter, 2), x, nil, w.WriteRecord)
 			must(t, err)
 			err = s.writeCodes(t.Context(), in, &walk, w)
-			if cache == "none" {
+			if cache == CodeCacheNone {
 				if !errors.Is(err, sentinel) {
 					t.Fatal(err)
 				}
@@ -332,7 +332,7 @@ func TestBothCachesRejectSourceCodeReplacedByAlloc(t *testing.T) {
 		h := crypto.Keccak256Hash([]byte{0x60, ordinary[19], 0})
 		must(t, db.Delete(h[:], nil))
 	})
-	for _, cache := range []string{"memory", "none"} {
+	for _, cache := range []string{CodeCacheMemory, CodeCacheNone} {
 		directory := t.TempDir()
 		o := f.options(filepath.Join(directory, "state"))
 		o.CodeCache = cache
