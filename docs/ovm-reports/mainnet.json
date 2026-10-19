@@ -1,0 +1,48 @@
+{
+  "accountingReconciled": true,
+  "clientVersion": "1.9.10-stable",
+  "executionVerified": true,
+  "from": 1,
+  "genesisDifferenceExplained": true,
+  "genesisState": {
+    "root": "0x86c9b145f467994ffb6b07274d02bf7bb302a7caac27a97823e1c9f456e3c1e3",
+    "ovmCodeHash": "0xcaf944c2c05ce2fa9f5fb1a832759082612937b4543c038b3c0648d693f57f44",
+    "balanceSlots": 0,
+    "balancesWei": "0",
+    "supplyWei": "0",
+    "differenceWei": "0"
+  },
+  "identity": {
+    "version": 1,
+    "genesis": "0x9e3354e081a54a57190bdb8948a597c840ea5dd496b0322864d4585f4a716892",
+    "configHash": "0xb8d811435fab564ab01f35886ee013e66b6a15c9d164148b4fd349a47ee13e29",
+    "witnessHash": "0xc5d2460186f7233c927e7db2dcc703c0e500b653ca82273b7bfad8045d85a470",
+    "to": 23182122,
+    "toHash": "0x31ccdca9cb607cdde996f7a8a82519bc873ffff68b898a3d8472069fc5724226",
+    "deSeqBlock": 16500000,
+    "seqValidHeight": 15214531,
+    "firstSequencer": "0x3525fdb496c612e4cde817a2567081470b7a2ecb"
+  },
+  "intervalCausesFullyExplained": true,
+  "matchesPreviousDiagnosis": true,
+  "previousDiagnosisDifferenceWei": "39864711177577535",
+  "targetState": {
+    "root": "0x3bfc6320e507cc55567c2e0e524a33039af91706a2daefc627827f4992735460",
+    "ovmCodeHash": "0xcaf944c2c05ce2fa9f5fb1a832759082612937b4543c038b3c0648d693f57f44",
+    "balanceSlots": 1353035,
+    "balancesWei": "6473281893488982723656198",
+    "supplyWei": "6473281853624271546078663",
+    "differenceWei": "39864711177577535"
+  },
+  "totals": {
+    "balanceDeltaWei": "6473281893488982723656198",
+    "supplyDeltaWei": "6473281853624271546078663",
+    "discrepancyDeltaWei": "39864711177577535",
+    "gasShortfallWei": "39864711177577535",
+    "legacySelfdestructWei": "0",
+    "unexplainedDeltaWei": "0"
+  },
+  "unexplainedEvents": 0,
+  "verifiedBlocks": 23182122,
+  "version": 1
+}

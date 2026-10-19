@@ -1,0 +1,125 @@
+name: test
+
+env:
+  GOTOOLCHAIN: local
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27.2"
+          check-latest: true
+      - name: Golangci-lint
+        uses: golangci/golangci-lint-action@v9
+        with:
+          version: v2.14.0
+          skip-cache: true
+          install-only: true
+      - run: make ci-root
+
+  race-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27.2"
+          check-latest: true
+      - run: make test-race-root
+
+  fixture-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27.2"
+          check-latest: true
+          cache: false
+          cache-dependency-path: "testdata/legacyintegration/go.sum"
+      - run: make check test-race
+        working-directory: testdata/legacyintegration
+
+  cross-build:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27.2"
+          check-latest: true
+      - name: Build
+        run: make build
+
+  fuzz:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - package: ./statefile
+            fuzz: FuzzRecord
+          - package: ./statefile
+            fuzz: FuzzFile
+          - package: ./statefile
+            fuzz: FuzzEncoderReuse
+          - package: ./internal/ovmevents
+            fuzz: FuzzDocument
+          - package: ./internal/strictio
+            fuzz: FuzzStrictJSON
+          - package: ./internal/migration
+            fuzz: FuzzAllocWord
+          - package: ./internal/migration
+            fuzz: FuzzAudit
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v7
+        with:
+          go-version: "1.27.2"
+          check-latest: true
+      - name: Fuzz ${{ matrix.fuzz }}
+        run: go test "${{ matrix.package }}" -run '^$' -fuzz '^${{ matrix.fuzz }}$' -fuzztime 1m
+
+  image:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
+        image: [l2state, ovm-event-sync]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: docker/setup-buildx-action@v4
+      - name: Build image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          target: ${{ matrix.image }}
+          pull: true
+          push: false
+          load: true
+          tags: ${{ matrix.image }}:test
+          provenance: false
+          sbom: false
+          cache-from: type=gha,scope=smoke-check-${{ matrix.image }}-${{ runner.os }}-${{ runner.arch }}
+          cache-to: type=gha,mode=max,scope=smoke-check-${{ matrix.image }}-${{ runner.os }}-${{ runner.arch }},ignore-error=true
+      - name: Smoke check
+        run: |
+          docker run --rm ${{ matrix.image }}:test version
+          docker run --rm ${{ matrix.image }}:test help
+          if [ '${{ matrix.image }}' = l2state ]; then
+            docker run --rm --entrypoint ovm-event-sync l2state:test version
+          fi

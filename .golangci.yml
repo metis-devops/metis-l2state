@@ -1,0 +1,43 @@
+version: "2"
+
+run:
+  timeout: 5m
+  modules-download-mode: readonly
+
+linters:
+  default: standard
+  enable:
+    - modernize
+    - govet
+    - errorlint
+    - misspell
+    - revive
+    - unconvert
+    - unparam
+    - dupl
+    - dupword
+    - gocognit
+  settings:
+    dupl:
+      threshold: 150
+    gocognit:
+      min-complexity: 30
+    revive:
+      rules:
+        - name: exported
+          arguments:
+            - disableStutteringCheck
+        - name: error-return
+        - name: error-strings
+        - name: var-naming
+  exclusions:
+    rules:
+      - path: _test\.go
+        linters:
+          - unparam
+          - dupl
+          - gocognit
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0

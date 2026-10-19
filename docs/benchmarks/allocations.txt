@@ -1,0 +1,4832 @@
+
+# CLI suite phase: 1k-bytecode-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42888167 ns/op	44185056 B/op	  245676 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40841917 ns/op	43145320 B/op	  245769 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42853375 ns/op	44191936 B/op	  245736 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41993708 ns/op	44187584 B/op	  245695 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43896666 ns/op	44190200 B/op	  245653 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40904459 ns/op	43140072 B/op	  245722 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40985584 ns/op	43139344 B/op	  245753 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40861083 ns/op	44193496 B/op	  245746 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40851625 ns/op	44179904 B/op	  245662 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39930833 ns/op	43147768 B/op	  245824 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40850001 ns/op	44190136 B/op	  245696 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40884708 ns/op	44183712 B/op	  245715 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40755416 ns/op	44185248 B/op	  245716 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40876458 ns/op	44188344 B/op	  245720 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40901166 ns/op	43136008 B/op	  245775 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41841417 ns/op	44189672 B/op	  245743 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40991166 ns/op	43133920 B/op	  245713 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44955875 ns/op	44178992 B/op	  245686 allocs/op
+PASS
+
+# CLI suite phase: 1k-bytecode-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41945833 ns/op	44183560 B/op	  245730 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40840959 ns/op	43135056 B/op	  245705 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41902917 ns/op	44185152 B/op	  245677 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41938000 ns/op	44181968 B/op	  245682 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41909583 ns/op	44192208 B/op	  245730 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42811917 ns/op	43131616 B/op	  245703 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41901000 ns/op	43141624 B/op	  245774 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40949751 ns/op	44183712 B/op	  245680 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40830333 ns/op	44185128 B/op	  245684 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41958583 ns/op	43131568 B/op	  245689 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41819708 ns/op	44184584 B/op	  245721 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40931292 ns/op	44196600 B/op	  245740 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40880000 ns/op	44195728 B/op	  245680 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40931500 ns/op	44179528 B/op	  245656 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40876708 ns/op	43143872 B/op	  245766 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40822833 ns/op	44192848 B/op	  245677 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39900709 ns/op	43139136 B/op	  245731 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40942792 ns/op	44179600 B/op	  245711 allocs/op
+PASS
+
+# CLI suite phase: 10k-w2-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44773667 ns/op	44192096 B/op	  245743 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40888375 ns/op	43144960 B/op	  245809 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40979041 ns/op	44192968 B/op	  245750 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40834750 ns/op	44184776 B/op	  245716 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40874625 ns/op	44188400 B/op	  245718 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40965292 ns/op	43135192 B/op	  245693 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40872208 ns/op	43134040 B/op	  245741 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40930834 ns/op	44182680 B/op	  245667 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40997500 ns/op	44189160 B/op	  245710 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40861084 ns/op	43135688 B/op	  245708 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40916125 ns/op	44193592 B/op	  245739 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40925666 ns/op	44194704 B/op	  245757 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40797501 ns/op	44196664 B/op	  245742 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39900666 ns/op	44175288 B/op	  245691 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40910541 ns/op	43149664 B/op	  245788 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40911083 ns/op	44181744 B/op	  245688 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40856583 ns/op	43141248 B/op	  245771 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39951458 ns/op	44188720 B/op	  245750 allocs/op
+PASS
+
+# CLI suite phase: 10k-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42840250 ns/op	44179616 B/op	  245595 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40978500 ns/op	43129080 B/op	  245701 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40845958 ns/op	44184648 B/op	  245721 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40905333 ns/op	44186848 B/op	  245729 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40949666 ns/op	44182256 B/op	  245672 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41953043 ns/op	43139192 B/op	  245728 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40886084 ns/op	43132384 B/op	  245696 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40838250 ns/op	44184600 B/op	  245702 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40900001 ns/op	44190240 B/op	  245758 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41008000 ns/op	43138112 B/op	  245720 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40860458 ns/op	44186840 B/op	  245750 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40874083 ns/op	44193680 B/op	  245662 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40934334 ns/op	44186648 B/op	  245689 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41863666 ns/op	44185920 B/op	  245723 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40904626 ns/op	43137144 B/op	  245703 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40909708 ns/op	44182936 B/op	  245699 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40844500 ns/op	43141288 B/op	  245721 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40957500 ns/op	44174368 B/op	  245664 allocs/op
+PASS
+
+# CLI suite phase: 10k-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41847167 ns/op	44188760 B/op	  245708 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42892792 ns/op	43141584 B/op	  245685 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40939249 ns/op	44185000 B/op	  245714 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40826958 ns/op	44194304 B/op	  245686 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40866375 ns/op	44189520 B/op	  245699 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41029166 ns/op	43146176 B/op	  245751 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41010333 ns/op	43143840 B/op	  245759 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40781333 ns/op	44179624 B/op	  245685 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40856166 ns/op	44190992 B/op	  245744 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40943125 ns/op	43139712 B/op	  245763 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40803917 ns/op	44185056 B/op	  245710 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40916458 ns/op	44186216 B/op	  245728 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40963041 ns/op	44176576 B/op	  245639 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40812500 ns/op	44184832 B/op	  245738 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43913750 ns/op	43148664 B/op	  245606 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40946751 ns/op	44177632 B/op	  245637 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40881000 ns/op	43134416 B/op	  245682 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43911541 ns/op	44198256 B/op	  245810 allocs/op
+PASS
+
+# CLI suite phase: 100k-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41926833 ns/op	44194784 B/op	  245732 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40939666 ns/op	43131936 B/op	  245711 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40873000 ns/op	44184944 B/op	  245694 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41930376 ns/op	44179408 B/op	  245700 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40986417 ns/op	44187776 B/op	  245705 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41510083 ns/op	43145600 B/op	  245817 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41995000 ns/op	43129496 B/op	  245698 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40855500 ns/op	44173096 B/op	  245653 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40904000 ns/op	44203432 B/op	  245756 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40985417 ns/op	43143408 B/op	  245829 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44957667 ns/op	44201864 B/op	  245777 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41812959 ns/op	44188576 B/op	  245674 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42819292 ns/op	44188784 B/op	  245732 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41920418 ns/op	44194944 B/op	  245664 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40855334 ns/op	43139944 B/op	  245759 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41914834 ns/op	44185648 B/op	  245709 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40946750 ns/op	43137816 B/op	  245720 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40845625 ns/op	44194752 B/op	  245727 allocs/op
+PASS
+
+# CLI suite phase: 10k-codes-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44940876 ns/op	44176632 B/op	  245710 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40943083 ns/op	43142704 B/op	  245751 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40853625 ns/op	44177776 B/op	  245622 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40782458 ns/op	44184952 B/op	  245650 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41969584 ns/op	44195664 B/op	  245733 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40998708 ns/op	43136080 B/op	  245689 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40892041 ns/op	43139712 B/op	  245779 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40974500 ns/op	44184920 B/op	  245751 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40850875 ns/op	44188248 B/op	  245728 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41899959 ns/op	43135936 B/op	  245718 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42948959 ns/op	44199152 B/op	  245750 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40788750 ns/op	44183600 B/op	  245741 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40881958 ns/op	44185624 B/op	  245718 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42942750 ns/op	44175616 B/op	  245694 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42858334 ns/op	43128568 B/op	  245612 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44881000 ns/op	44208896 B/op	  245765 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42760334 ns/op	43142104 B/op	  245775 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45892875 ns/op	44194312 B/op	  245755 allocs/op
+PASS
+
+# CLI suite phase: 10k-codes-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44797584 ns/op	44184448 B/op	  245692 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41882874 ns/op	43134000 B/op	  245668 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42882916 ns/op	44195216 B/op	  245739 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41922791 ns/op	44191320 B/op	  245682 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41864875 ns/op	44195272 B/op	  245695 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42974042 ns/op	43121960 B/op	  245631 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41817750 ns/op	43141440 B/op	  245704 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42926583 ns/op	44187112 B/op	  245621 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41984834 ns/op	44197168 B/op	  245780 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41974959 ns/op	43129232 B/op	  245724 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42805500 ns/op	44183560 B/op	  245699 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42888166 ns/op	44189352 B/op	  245666 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45788459 ns/op	44180600 B/op	  245682 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43005374 ns/op	44195112 B/op	  245799 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43870583 ns/op	43146720 B/op	  245733 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44847918 ns/op	44178488 B/op	  245711 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42823459 ns/op	43144816 B/op	  245773 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42847376 ns/op	44191128 B/op	  245729 allocs/op
+PASS
+
+# CLI suite phase: 100k-codes-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44032959 ns/op	44184616 B/op	  245721 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43789333 ns/op	43131512 B/op	  245702 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42020001 ns/op	44178160 B/op	  245658 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40931417 ns/op	44183240 B/op	  245667 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40848999 ns/op	44193504 B/op	  245699 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40844292 ns/op	43135056 B/op	  245729 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40950709 ns/op	43126936 B/op	  245725 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40825958 ns/op	44188736 B/op	  245711 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40876834 ns/op	44175128 B/op	  245636 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40955166 ns/op	43116832 B/op	  245617 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40920125 ns/op	44186592 B/op	  245640 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40899584 ns/op	44189112 B/op	  245701 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39976416 ns/op	44190640 B/op	  245742 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42890292 ns/op	44190152 B/op	  245715 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42775125 ns/op	43133304 B/op	  245713 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41886875 ns/op	44199840 B/op	  245748 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42870458 ns/op	43135608 B/op	  245643 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41891166 ns/op	44184504 B/op	  245666 allocs/op
+PASS
+
+# CLI suite phase: 100k-codes-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43677125 ns/op	44185080 B/op	  245733 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42925708 ns/op	43129448 B/op	  245655 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44860751 ns/op	44192624 B/op	  245692 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42915500 ns/op	44186648 B/op	  245729 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42841749 ns/op	44184736 B/op	  245646 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42030917 ns/op	43140648 B/op	  245727 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40907084 ns/op	43135456 B/op	  245687 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41736833 ns/op	44194168 B/op	  245724 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40878208 ns/op	44187200 B/op	  245748 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41883625 ns/op	43136720 B/op	  245755 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42869958 ns/op	44200144 B/op	  245802 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41865500 ns/op	44190160 B/op	  245689 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41862542 ns/op	44184032 B/op	  245680 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42815292 ns/op	44177280 B/op	  245684 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41701459 ns/op	43127664 B/op	  245608 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41893542 ns/op	44189048 B/op	  245676 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40905707 ns/op	43125664 B/op	  245695 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41886167 ns/op	44178128 B/op	  245684 allocs/op
+PASS
+
+# CLI suite phase: 10k-codes-w8-zstd-alloc
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44837126 ns/op	44181256 B/op	  245675 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42893376 ns/op	43138064 B/op	  245636 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42883291 ns/op	44184384 B/op	  245650 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44817875 ns/op	44193968 B/op	  245709 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45842166 ns/op	44190520 B/op	  245701 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44811333 ns/op	43142984 B/op	  245729 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45767500 ns/op	43149696 B/op	  245794 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43906875 ns/op	44188960 B/op	  245715 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43889666 ns/op	44182304 B/op	  245668 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42822417 ns/op	43149216 B/op	  245793 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44829583 ns/op	44191560 B/op	  245754 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45744376 ns/op	44203784 B/op	  245689 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46767750 ns/op	44191136 B/op	  245619 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  47710166 ns/op	44185528 B/op	  245685 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46939875 ns/op	43143552 B/op	  245642 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44909708 ns/op	44180080 B/op	  245738 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  47009250 ns/op	43143192 B/op	  245706 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45807333 ns/op	44196880 B/op	  245729 allocs/op
+PASS
+
+# CLI suite phase: 10k-codes-w8-none-alloc
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43851041 ns/op	44182536 B/op	  245671 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42829166 ns/op	43141144 B/op	  245725 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44792083 ns/op	44196984 B/op	  245776 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45912125 ns/op	44197680 B/op	  245749 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  47820416 ns/op	44191400 B/op	  245643 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  51805709 ns/op	43147552 B/op	  245743 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42875750 ns/op	43141560 B/op	  245679 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43948417 ns/op	44198432 B/op	  245741 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45941875 ns/op	44184568 B/op	  245636 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45776792 ns/op	43152384 B/op	  245784 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45864542 ns/op	44195088 B/op	  245688 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46901707 ns/op	44191712 B/op	  245680 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46929624 ns/op	44192544 B/op	  245700 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44956126 ns/op	44188544 B/op	  245693 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  47821875 ns/op	43146896 B/op	  245710 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46866541 ns/op	44184720 B/op	  245706 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45739874 ns/op	43142248 B/op	  245679 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  47071750 ns/op	44193872 B/op	  245722 allocs/op
+PASS
+
+# CLI suite phase: 100k-codes-w8-zstd-alloc
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43772625 ns/op	44186232 B/op	  245710 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44898666 ns/op	43129184 B/op	  245663 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42893333 ns/op	44202152 B/op	  245730 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45918249 ns/op	44193448 B/op	  245699 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43861626 ns/op	44192544 B/op	  245632 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41879083 ns/op	43130176 B/op	  245620 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44763667 ns/op	43144328 B/op	  245776 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42867750 ns/op	44194288 B/op	  245798 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40863458 ns/op	44186056 B/op	  245722 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41855625 ns/op	43123056 B/op	  245687 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40866458 ns/op	44190232 B/op	  245714 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42875542 ns/op	44196624 B/op	  245739 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42726709 ns/op	44196768 B/op	  245723 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42849041 ns/op	44185880 B/op	  245559 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43770625 ns/op	43133992 B/op	  245717 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44839500 ns/op	44188728 B/op	  245663 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43900792 ns/op	43142088 B/op	  245747 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43880376 ns/op	44191608 B/op	  245742 allocs/op
+PASS
+
+# CLI suite phase: 100k-codes-w8-none-alloc
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44830792 ns/op	44200392 B/op	  245754 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43854459 ns/op	43137880 B/op	  245699 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43930542 ns/op	44186632 B/op	  245694 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41856500 ns/op	44179408 B/op	  245686 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46824375 ns/op	44194184 B/op	  245713 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42784375 ns/op	43135312 B/op	  245754 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43873666 ns/op	43135624 B/op	  245682 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41987208 ns/op	44184136 B/op	  245678 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42783500 ns/op	44175744 B/op	  245659 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45931834 ns/op	43144480 B/op	  245641 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42992083 ns/op	44197248 B/op	  245794 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41893792 ns/op	44186072 B/op	  245686 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41838251 ns/op	44195648 B/op	  245731 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40890583 ns/op	44197600 B/op	  245769 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41921959 ns/op	43138032 B/op	  245728 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41999000 ns/op	44188864 B/op	  245724 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41962042 ns/op	43134752 B/op	  245648 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41835749 ns/op	44187544 B/op	  245731 allocs/op
+PASS
+
+# CLI suite phase: 32x1025-storage-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42896625 ns/op	44195952 B/op	  245756 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40897375 ns/op	43137344 B/op	  245734 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46889875 ns/op	44205384 B/op	  245857 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43730792 ns/op	44189560 B/op	  245734 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42832250 ns/op	44186704 B/op	  245656 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45784292 ns/op	43150512 B/op	  245776 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45943833 ns/op	43140232 B/op	  245619 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46876167 ns/op	44195712 B/op	  245649 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44894875 ns/op	44185912 B/op	  245579 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  46805167 ns/op	43136744 B/op	  245649 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45842708 ns/op	44188408 B/op	  245662 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42819334 ns/op	44190536 B/op	  245788 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42878749 ns/op	44195928 B/op	  245733 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40898042 ns/op	44180560 B/op	  245672 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  45822750 ns/op	43146248 B/op	  245703 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44833958 ns/op	44180160 B/op	  245681 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44846625 ns/op	43137656 B/op	  245759 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44765375 ns/op	44195096 B/op	  245793 allocs/op
+PASS
+
+# CLI suite phase: 1m-storage-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41899542 ns/op	44194176 B/op	  245716 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40931708 ns/op	43139832 B/op	  245790 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41821793 ns/op	44188000 B/op	  245753 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40850000 ns/op	44184088 B/op	  245669 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40951208 ns/op	44189968 B/op	  245687 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40917501 ns/op	43137416 B/op	  245775 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40823833 ns/op	43135472 B/op	  245729 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40794500 ns/op	44191584 B/op	  245769 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41871875 ns/op	44180496 B/op	  245693 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41047459 ns/op	43133608 B/op	  245668 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40972166 ns/op	44188728 B/op	  245720 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40914251 ns/op	44185224 B/op	  245735 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41950667 ns/op	44181368 B/op	  245670 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40778208 ns/op	44194008 B/op	  245711 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41923833 ns/op	43149920 B/op	  245754 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41059959 ns/op	44190712 B/op	  245726 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42011834 ns/op	43142752 B/op	  245745 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40785500 ns/op	44196496 B/op	  245778 allocs/op
+PASS
+
+# CLI suite phase: 1m-storage-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  44251333 ns/op	44182792 B/op	  245651 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40725958 ns/op	43143848 B/op	  245736 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42297668 ns/op	44190496 B/op	  245712 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41090416 ns/op	44187376 B/op	  245725 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40953542 ns/op	44180360 B/op	  245695 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40806667 ns/op	43138144 B/op	  245712 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41377334 ns/op	43131088 B/op	  245705 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42576750 ns/op	44182552 B/op	  245719 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39744791 ns/op	44188576 B/op	  245767 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40885125 ns/op	43143176 B/op	  245807 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40926500 ns/op	44192448 B/op	  245726 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40956625 ns/op	44185880 B/op	  245687 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40897208 ns/op	44184952 B/op	  245720 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43935750 ns/op	44188200 B/op	  245766 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43915375 ns/op	43136192 B/op	  245712 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41771542 ns/op	44176368 B/op	  245718 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  42611375 ns/op	43150488 B/op	  245806 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  43231458 ns/op	44195176 B/op	  245736 allocs/op
+PASS
+
+# CLI suite phase: 1m-storage-w8-zstd-overlay
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41871500 ns/op	44187512 B/op	  245701 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40884375 ns/op	43137840 B/op	  245686 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40963000 ns/op	44178824 B/op	  245650 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  39934416 ns/op	44187608 B/op	  245756 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40911459 ns/op	44180680 B/op	  245624 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41965834 ns/op	43140072 B/op	  245720 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41832417 ns/op	43139344 B/op	  245720 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41874291 ns/op	44183336 B/op	  245665 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41948584 ns/op	44195064 B/op	  245797 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40842958 ns/op	43130752 B/op	  245705 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41855166 ns/op	44187728 B/op	  245699 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41901000 ns/op	44191440 B/op	  245696 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41910875 ns/op	44175568 B/op	  245701 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41912416 ns/op	44187168 B/op	  245727 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41926583 ns/op	43143104 B/op	  245790 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41878666 ns/op	44188712 B/op	  245698 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  41907417 ns/op	43143024 B/op	  245691 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkMigrate-16    	       1	  40958500 ns/op	44191152 B/op	  245787 allocs/op
+PASS
+
+# CLI suite phase: dump-1k-bytecode-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30911458 ns/op	39841912 B/op	  204521 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28918791 ns/op	38776832 B/op	  204444 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27935250 ns/op	38779984 B/op	  204484 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28914125 ns/op	39841240 B/op	  204512 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28950500 ns/op	38780856 B/op	  204505 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28804166 ns/op	38789008 B/op	  204479 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28884417 ns/op	38784536 B/op	  204504 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29024542 ns/op	39844208 B/op	  204511 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27825500 ns/op	38782712 B/op	  204475 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27929500 ns/op	38768392 B/op	  204429 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28849291 ns/op	38776880 B/op	  204455 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28877291 ns/op	39840824 B/op	  204519 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29073500 ns/op	38779680 B/op	  204501 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29005250 ns/op	39846784 B/op	  204522 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28895000 ns/op	38778720 B/op	  204477 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28845916 ns/op	38778944 B/op	  204437 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28856084 ns/op	38788952 B/op	  204505 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28829500 ns/op	39838072 B/op	  204510 allocs/op
+PASS
+
+# CLI suite phase: dump-1k-bytecode-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30755958 ns/op	39837912 B/op	  204516 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30888625 ns/op	38786328 B/op	  204497 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30873333 ns/op	38783184 B/op	  204460 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29856250 ns/op	39847648 B/op	  204540 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30016792 ns/op	38774576 B/op	  204429 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29902042 ns/op	38787112 B/op	  204503 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30911708 ns/op	38779536 B/op	  204474 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29913542 ns/op	39841624 B/op	  204524 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29892751 ns/op	38786656 B/op	  204493 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30823334 ns/op	38785120 B/op	  204494 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29803084 ns/op	38775872 B/op	  204472 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30919041 ns/op	39840528 B/op	  204514 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29909750 ns/op	38782096 B/op	  204469 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29916291 ns/op	39842888 B/op	  204528 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29851917 ns/op	38783184 B/op	  204492 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29850999 ns/op	38785192 B/op	  204509 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29955625 ns/op	38779808 B/op	  204496 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28982083 ns/op	39846848 B/op	  204531 allocs/op
+PASS
+
+# CLI suite phase: dump-10k-w2-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29869208 ns/op	39837160 B/op	  204484 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28898709 ns/op	38773416 B/op	  204439 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30780250 ns/op	38788504 B/op	  204473 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28918792 ns/op	39830288 B/op	  204506 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28843792 ns/op	38787272 B/op	  204474 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30927000 ns/op	38780504 B/op	  204491 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29898209 ns/op	38779936 B/op	  204482 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28906125 ns/op	39838104 B/op	  204510 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28970626 ns/op	38779136 B/op	  204484 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28923541 ns/op	38776032 B/op	  204450 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29790584 ns/op	38783520 B/op	  204479 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28891042 ns/op	39828560 B/op	  204473 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28969666 ns/op	38778704 B/op	  204487 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28939084 ns/op	39827232 B/op	  204478 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28939999 ns/op	38771240 B/op	  204414 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28859583 ns/op	38782928 B/op	  204485 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27935500 ns/op	38785992 B/op	  204507 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29906375 ns/op	39842648 B/op	  204523 allocs/op
+PASS
+
+# CLI suite phase: dump-10k-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29864459 ns/op	39826600 B/op	  204484 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28843083 ns/op	38786232 B/op	  204495 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29893292 ns/op	38780000 B/op	  204482 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28892917 ns/op	39846928 B/op	  204521 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28956374 ns/op	38773416 B/op	  204463 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27938250 ns/op	38783832 B/op	  204507 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28811625 ns/op	38793392 B/op	  204478 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28872292 ns/op	39831352 B/op	  204490 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28937376 ns/op	38778904 B/op	  204491 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28871917 ns/op	38791704 B/op	  204521 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28913499 ns/op	38782128 B/op	  204473 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28829208 ns/op	39844656 B/op	  204511 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29756833 ns/op	38789456 B/op	  204503 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28990834 ns/op	39835840 B/op	  204515 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28883708 ns/op	38783488 B/op	  204472 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28904126 ns/op	38775368 B/op	  204462 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28920251 ns/op	38778920 B/op	  204490 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29905667 ns/op	39847152 B/op	  204524 allocs/op
+PASS
+
+# CLI suite phase: dump-10k-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30935292 ns/op	39846648 B/op	  204502 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29899791 ns/op	38791120 B/op	  204455 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28941583 ns/op	38783296 B/op	  204488 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28838500 ns/op	39843464 B/op	  204533 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29879000 ns/op	38787920 B/op	  204510 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30124959 ns/op	38779040 B/op	  204478 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28868750 ns/op	38785504 B/op	  204518 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28924667 ns/op	39835832 B/op	  204482 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29909250 ns/op	38779920 B/op	  204445 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28900417 ns/op	38785472 B/op	  204506 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29868209 ns/op	38769016 B/op	  204429 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28871875 ns/op	39846368 B/op	  204515 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29869876 ns/op	38775376 B/op	  204465 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28977250 ns/op	39840088 B/op	  204518 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29915583 ns/op	38787240 B/op	  204491 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29988041 ns/op	38789920 B/op	  204491 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29844709 ns/op	38785432 B/op	  204493 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28950541 ns/op	39845952 B/op	  204542 allocs/op
+PASS
+
+# CLI suite phase: dump-100k-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29924501 ns/op	39835968 B/op	  204519 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28922417 ns/op	38781264 B/op	  204478 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29024041 ns/op	38779848 B/op	  204462 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28882459 ns/op	39839224 B/op	  204499 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28897583 ns/op	38789928 B/op	  204508 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29012417 ns/op	38795968 B/op	  204508 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28987292 ns/op	38775832 B/op	  204449 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28906543 ns/op	39833960 B/op	  204500 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29953249 ns/op	38781904 B/op	  204447 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29063126 ns/op	38775080 B/op	  204477 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28967250 ns/op	38782160 B/op	  204486 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29055209 ns/op	39842992 B/op	  204546 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28902916 ns/op	38784864 B/op	  204499 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28765542 ns/op	39842720 B/op	  204489 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28940625 ns/op	38788744 B/op	  204474 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28848875 ns/op	38779944 B/op	  204454 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29938750 ns/op	38786608 B/op	  204488 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29922666 ns/op	39834936 B/op	  204514 allocs/op
+PASS
+
+# CLI suite phase: dump-10k-codes-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29896417 ns/op	39831248 B/op	  204496 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28943167 ns/op	38788352 B/op	  204486 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28857125 ns/op	38789784 B/op	  204468 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28896167 ns/op	39834216 B/op	  204488 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28927000 ns/op	38772808 B/op	  204450 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29890001 ns/op	38791832 B/op	  204496 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28908209 ns/op	38779408 B/op	  204497 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28979125 ns/op	39814640 B/op	  204434 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28932916 ns/op	38787504 B/op	  204507 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28875125 ns/op	38779536 B/op	  204456 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29950626 ns/op	38785096 B/op	  204477 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29922875 ns/op	39838720 B/op	  204523 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28839875 ns/op	38773944 B/op	  204446 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30873457 ns/op	39833656 B/op	  204485 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29860708 ns/op	38783848 B/op	  204498 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29826001 ns/op	38782048 B/op	  204471 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29934333 ns/op	38791128 B/op	  204513 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30888208 ns/op	39838424 B/op	  204509 allocs/op
+PASS
+
+# CLI suite phase: dump-10k-codes-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  31821625 ns/op	39833808 B/op	  204473 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29911666 ns/op	38787752 B/op	  204480 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28853958 ns/op	38783400 B/op	  204477 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29887209 ns/op	39843592 B/op	  204516 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28892041 ns/op	38791016 B/op	  204509 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29905000 ns/op	38787008 B/op	  204483 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28845167 ns/op	38776248 B/op	  204448 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30909250 ns/op	39846432 B/op	  204497 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28808708 ns/op	38783808 B/op	  204468 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29834625 ns/op	38789672 B/op	  204483 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29924626 ns/op	38780104 B/op	  204475 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28944125 ns/op	39845232 B/op	  204515 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29768625 ns/op	38788976 B/op	  204507 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28848375 ns/op	39844368 B/op	  204505 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28975625 ns/op	38777736 B/op	  204496 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28990917 ns/op	38779824 B/op	  204446 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28833959 ns/op	38774320 B/op	  204437 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  32875375 ns/op	39848160 B/op	  204503 allocs/op
+PASS
+
+# CLI suite phase: dump-100k-codes-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30666792 ns/op	39838208 B/op	  204532 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30946791 ns/op	38785504 B/op	  204495 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29831292 ns/op	38785424 B/op	  204495 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29910750 ns/op	39848592 B/op	  204526 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28854042 ns/op	38772352 B/op	  204455 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28887583 ns/op	38775568 B/op	  204427 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28868584 ns/op	38783056 B/op	  204491 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28933542 ns/op	39843600 B/op	  204504 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28966209 ns/op	38775456 B/op	  204443 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27931167 ns/op	38785752 B/op	  204495 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28955375 ns/op	38782288 B/op	  204467 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27918250 ns/op	39838016 B/op	  204521 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28859791 ns/op	38783656 B/op	  204489 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28882666 ns/op	39836712 B/op	  204493 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28877500 ns/op	38779096 B/op	  204484 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28957000 ns/op	38779888 B/op	  204475 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28983916 ns/op	38791544 B/op	  204508 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28896500 ns/op	39836360 B/op	  204511 allocs/op
+PASS
+
+# CLI suite phase: dump-100k-codes-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30896667 ns/op	39840144 B/op	  204477 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30818542 ns/op	38785856 B/op	  204495 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30058541 ns/op	38774992 B/op	  204434 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29929542 ns/op	39844976 B/op	  204502 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29717791 ns/op	38791816 B/op	  204510 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28891376 ns/op	38782328 B/op	  204444 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28791458 ns/op	38787048 B/op	  204465 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28960292 ns/op	39846480 B/op	  204525 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28882708 ns/op	38785704 B/op	  204491 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28845792 ns/op	38773768 B/op	  204448 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28849833 ns/op	38784144 B/op	  204441 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29960208 ns/op	39834560 B/op	  204504 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29886416 ns/op	38782160 B/op	  204475 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29930666 ns/op	39832776 B/op	  204476 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28987542 ns/op	38788408 B/op	  204476 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28938626 ns/op	38770280 B/op	  204437 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28945334 ns/op	38778416 B/op	  204447 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28942541 ns/op	39842216 B/op	  204522 allocs/op
+PASS
+
+# CLI suite phase: dump-32x1025-storage-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30832875 ns/op	39833792 B/op	  204496 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28857375 ns/op	38780112 B/op	  204442 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28845124 ns/op	38793416 B/op	  204521 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28913459 ns/op	39844992 B/op	  204508 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28873000 ns/op	38793560 B/op	  204517 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29750625 ns/op	38793048 B/op	  204514 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28826709 ns/op	38765784 B/op	  204439 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29881459 ns/op	39839720 B/op	  204525 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28922875 ns/op	38773064 B/op	  204469 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29867709 ns/op	38795536 B/op	  204512 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29816083 ns/op	38779048 B/op	  204485 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28978666 ns/op	39834928 B/op	  204501 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28993792 ns/op	38786472 B/op	  204497 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29013333 ns/op	39845200 B/op	  204524 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29872208 ns/op	38780352 B/op	  204442 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27983000 ns/op	38779216 B/op	  204451 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29968500 ns/op	38777888 B/op	  204457 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29903416 ns/op	39828320 B/op	  204487 allocs/op
+PASS
+
+# CLI suite phase: dump-1m-storage-w8-zstd
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30247417 ns/op	39834264 B/op	  204510 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28903708 ns/op	38786664 B/op	  204466 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28818624 ns/op	38783504 B/op	  204500 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28957750 ns/op	39842720 B/op	  204507 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28985875 ns/op	38782688 B/op	  204483 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28938375 ns/op	38771848 B/op	  204452 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28961250 ns/op	38786480 B/op	  204506 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28919209 ns/op	39837360 B/op	  204462 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28999083 ns/op	38791656 B/op	  204505 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28890166 ns/op	38784352 B/op	  204496 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28793376 ns/op	38790160 B/op	  204479 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28932750 ns/op	39841832 B/op	  204499 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29947043 ns/op	38783560 B/op	  204444 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29859500 ns/op	39838240 B/op	  204509 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29964625 ns/op	38786568 B/op	  204515 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29945042 ns/op	38783016 B/op	  204491 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28960542 ns/op	38799184 B/op	  204495 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28933542 ns/op	39842560 B/op	  204519 allocs/op
+PASS
+
+# CLI suite phase: dump-1m-storage-w8-none
+pair=0 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  30861625 ns/op	39834016 B/op	  204500 allocs/op
+PASS
+pair=0 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28857334 ns/op	38793856 B/op	  204492 allocs/op
+PASS
+pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28884584 ns/op	38783592 B/op	  204445 allocs/op
+PASS
+pair=1 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  29035833 ns/op	39833952 B/op	  204506 allocs/op
+PASS
+pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28922083 ns/op	38778512 B/op	  204453 allocs/op
+PASS
+pair=1 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28962417 ns/op	38787872 B/op	  204520 allocs/op
+PASS
+pair=2 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28946792 ns/op	38784360 B/op	  204486 allocs/op
+PASS
+pair=2 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28965874 ns/op	39843768 B/op	  204523 allocs/op
+PASS
+pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28893125 ns/op	38789016 B/op	  204497 allocs/op
+PASS
+pair=3 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28053333 ns/op	38783432 B/op	  204461 allocs/op
+PASS
+pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28943625 ns/op	38786584 B/op	  204496 allocs/op
+PASS
+pair=3 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28967791 ns/op	39828808 B/op	  204475 allocs/op
+PASS
+pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28906875 ns/op	38776688 B/op	  204449 allocs/op
+PASS
+pair=4 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28931958 ns/op	39833056 B/op	  204526 allocs/op
+PASS
+pair=4 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28880166 ns/op	38776152 B/op	  204488 allocs/op
+PASS
+pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28947542 ns/op	38781968 B/op	  204475 allocs/op
+PASS
+pair=5 implementation=current-none
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  28976208 ns/op	38783968 B/op	  204511 allocs/op
+PASS
+pair=5 implementation=current-memory
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkDump-16    	       1	  27972458 ns/op	39844904 B/op	  204513 allocs/op
+PASS
+
+# Index 10000/shared pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    617416 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	   1279082 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    910708 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    861250 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    739625 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    717125 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    673543 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    644458 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    640083 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    644333 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    608042 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/shared pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/shared/ordered-16         	       1	    621208 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    702874 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    671083 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    657125 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    650166 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    670168 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    702917 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    642749 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    673917 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    658499 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    674500 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    656542 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/overlap pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/overlap/ordered-16         	       1	    654458 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1982418 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1958959 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1939417 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1939125 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1920333 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1970875 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1971208 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1905375 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1921792 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1997709 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1935001 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 10000/repeated pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/10000/repeated/ordered-16         	       1	   1967583 ns/op	 1978792 B/op	      99 allocs/op
+PASS
+
+# Index 100000/shared pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5978209 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5902458 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5918583 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   6159583 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5966375 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5879292 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/shared pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5950750 ns/op	16614768 B/op	     648 allocs/op
+PASS
+
+# Index 100000/shared pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   6047333 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/shared pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   6308875 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   6058333 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   6047625 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/shared pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/shared/ordered-16         	       1	   5984541 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6491833 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/overlap pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6481916 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6453751 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6269416 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6293000 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6453166 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6420834 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6572543 ns/op	16614768 B/op	     648 allocs/op
+PASS
+
+# Index 100000/overlap pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6475959 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6407291 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/overlap pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6405250 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/overlap pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/overlap/ordered-16         	       1	   6470334 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21812042 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21731083 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21496167 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/repeated pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21575376 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21305334 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/repeated pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21418584 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21665625 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21445959 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21472500 ns/op	16609304 B/op	     642 allocs/op
+PASS
+
+# Index 100000/repeated pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21520792 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 100000/repeated pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21888708 ns/op	16614768 B/op	     648 allocs/op
+PASS
+
+# Index 100000/repeated pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/100000/repeated/ordered-16         	       1	  21527458 ns/op	16609192 B/op	     641 allocs/op
+PASS
+
+# Index 1000000/shared pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  92378667 ns/op	241178720 B/op	    9199 allocs/op
+PASS
+
+# Index 1000000/shared pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  88809833 ns/op	241074664 B/op	    9187 allocs/op
+PASS
+
+# Index 1000000/shared pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  89426167 ns/op	241173256 B/op	    9193 allocs/op
+PASS
+
+# Index 1000000/shared pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  92037207 ns/op	241369768 B/op	    9199 allocs/op
+PASS
+
+# Index 1000000/shared pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  91338542 ns/op	240976296 B/op	    9183 allocs/op
+PASS
+
+# Index 1000000/shared pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  93066250 ns/op	241173032 B/op	    9191 allocs/op
+PASS
+
+# Index 1000000/shared pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  87373750 ns/op	241074664 B/op	    9187 allocs/op
+PASS
+
+# Index 1000000/shared pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  90352625 ns/op	240877928 B/op	    9179 allocs/op
+PASS
+
+# Index 1000000/shared pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  91927875 ns/op	240976296 B/op	    9183 allocs/op
+PASS
+
+# Index 1000000/shared pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  94569167 ns/op	240976408 B/op	    9184 allocs/op
+PASS
+
+# Index 1000000/shared pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  88047126 ns/op	241074664 B/op	    9187 allocs/op
+PASS
+
+# Index 1000000/shared pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/shared/ordered-16         	       1	  89146000 ns/op	240883504 B/op	    9186 allocs/op
+PASS
+
+# Index 1000000/overlap pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  99121083 ns/op	241173032 B/op	    9191 allocs/op
+PASS
+
+# Index 1000000/overlap pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98343250 ns/op	241080240 B/op	    9194 allocs/op
+PASS
+
+# Index 1000000/overlap pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98011707 ns/op	241075000 B/op	    9190 allocs/op
+PASS
+
+# Index 1000000/overlap pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98670209 ns/op	241178608 B/op	    9198 allocs/op
+PASS
+
+# Index 1000000/overlap pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	 106056292 ns/op	240877928 B/op	    9179 allocs/op
+PASS
+
+# Index 1000000/overlap pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  99811708 ns/op	241276976 B/op	    9202 allocs/op
+PASS
+
+# Index 1000000/overlap pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98948875 ns/op	240981984 B/op	    9191 allocs/op
+PASS
+
+# Index 1000000/overlap pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98768500 ns/op	241074664 B/op	    9187 allocs/op
+PASS
+
+# Index 1000000/overlap pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98810542 ns/op	241173032 B/op	    9191 allocs/op
+PASS
+
+# Index 1000000/overlap pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  99264875 ns/op	240779672 B/op	    9176 allocs/op
+PASS
+
+# Index 1000000/overlap pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  98474126 ns/op	241276976 B/op	    9202 allocs/op
+PASS
+
+# Index 1000000/overlap pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/overlap/ordered-16         	       1	  97071291 ns/op	241468136 B/op	    9203 allocs/op
+PASS
+
+# Index 1000000/repeated pair=0 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 572023125 ns/op	241075000 B/op	    9190 allocs/op
+PASS
+
+# Index 1000000/repeated pair=0 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 549461958 ns/op	241173144 B/op	    9192 allocs/op
+PASS
+
+# Index 1000000/repeated pair=1 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 552119208 ns/op	240877928 B/op	    9179 allocs/op
+PASS
+
+# Index 1000000/repeated pair=1 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 546512958 ns/op	241074664 B/op	    9187 allocs/op
+PASS
+
+# Index 1000000/repeated pair=2 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 558209625 ns/op	241074776 B/op	    9188 allocs/op
+PASS
+
+# Index 1000000/repeated pair=2 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 550911625 ns/op	241173144 B/op	    9192 allocs/op
+PASS
+
+# Index 1000000/repeated pair=3 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 549149250 ns/op	241178608 B/op	    9198 allocs/op
+PASS
+
+# Index 1000000/repeated pair=3 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 571959125 ns/op	241173032 B/op	    9191 allocs/op
+PASS
+
+# Index 1000000/repeated pair=4 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 547758292 ns/op	241468136 B/op	    9203 allocs/op
+PASS
+
+# Index 1000000/repeated pair=4 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 548482958 ns/op	241271400 B/op	    9195 allocs/op
+PASS
+
+# Index 1000000/repeated pair=5 implementation=current
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 610241208 ns/op	240976296 B/op	    9183 allocs/op
+PASS
+
+# Index 1000000/repeated pair=5 implementation=baseline
+goos: darwin
+goarch: arm64
+pkg: github.com/metis-devops/metis-l2state/internal/migration
+cpu: Apple M3 Max
+BenchmarkCodeHashIndex/1000000/repeated/ordered-16         	       1	 573145375 ns/op	241271400 B/op	    9195 allocs/op
+PASS

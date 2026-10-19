@@ -1,0 +1,122 @@
+package migration
+
+import (
+	"context"
+	"crypto/sha256"
+	"encoding/json"
+	"errors"
+	"os"
+	"path/filepath"
+	"strings"
+	"testing"
+)
+
+func TestStrictAllocInputs(t *testing.T) {
+	address := "0x0000000000000000000000000000000000000101"
+	for _, body := range []string{"null", `{}` + `{}`, `{"` + address + `":null}`, `{"` + address + `":{"balance":null}}`, `{"` + address + `":{"nonce":"0x1","nonce":"0x2"}}`, `{"` + address + `":{"unknown":1}}`, `{"` + address + `":{"storage":{"0x01":"0x01","01":"0x02"}}}`, `{"` + address + `":{},"` + address + `":{}}`, `{"` + ovmAddress.Hex() + `":{}}`, `{"` + address + `":{"balance":"-1"}}`, `{"` + address + `":{"storage":{"0x1":"0x01"}}}`} {
+		path := filepath.Join(t.TempDir(), "alloc")
+		must(t, os.WriteFile(path, []byte(body), 0600))
+		if _, _, err := readAlloc(t.Context(), path); err == nil {
+			t.Fatalf("accepted %s", body)
+		}
+	}
+	path := filepath.Join(t.TempDir(), "alloc")
+	body := strings.Repeat(" \n", 100000) + `{"` + address + `":{"balance":"0x0","code":"0x","nonce":"0x0","storage":{}}}` + strings.Repeat(" \n", 100000)
+	must(t, os.WriteFile(path, []byte(body), 0600))
+	patches, digest, err := readAlloc(t.Context(), path)
+	must(t, err)
+	got := sha256.Sum256([]byte(body))
+	if digest != got || len(patches) != 1 {
+		t.Fatal("raw-byte hashing")
+	}
+	for _, p := range patches {
+		if !p.active() || p.Balance == nil || p.Nonce == nil || p.Code == nil {
+			t.Fatal("explicit zero lost")
+		}
+	}
+}
+func TestStrictRetainAndAudit(t *testing.T) {
+	for _, body := range []string{"\n", "# comment", eoa.Hex() + "\n" + eoa.Hex(), strings.Repeat("x", 4096)} {
+		path := filepath.Join(t.TempDir(), "retain")
+		must(t, os.WriteFile(path, []byte(body), 0600))
+		if _, _, err := readRetain(t.Context(), path); err == nil {
+			t.Fatal("accepted invalid retain list")
+		}
+	}
+	f := newFixture(t, 0, 1)
+	path := writeAudit(t, f, 1)
+	raw, err := os.ReadFile(path)
+	must(t, err)
+	for _, bad := range [][]byte{append([]byte(`{"version":1,`), raw[1:]...), []byte(strings.Replace(string(raw), `"unexplainedEvents":0`, `"unexplainedEvents":1`, 1)), []byte(strings.Replace(string(raw), `"version":1`, `"version":null`, 1))} {
+		must(t, os.WriteFile(path, bad, 0600))
+		if _, _, err := readOVMAuditSummary(t.Context(), path); err == nil {
+			t.Fatal("accepted invalid audit")
+		}
+	}
+}
+func TestInputSymlink(t *testing.T) {
+	f := newFixture(t, 0, 0)
+	link := filepath.Join(t.TempDir(), "link")
+	must(t, os.Symlink(f.runtime, link))
+	if _, err := openInput(link); err == nil {
+		t.Fatal("accepted symlink")
+	}
+}
+func FuzzAllocWord(f *testing.F) {
+	f.Add("0x00")
+	f.Add("1234")
+	f.Fuzz(func(t *testing.T, s string) { _, _ = allocWord(s) })
+}
+func FuzzAudit(f *testing.F) {
+	f.Add([]byte(`{}`))
+	f.Fuzz(func(t *testing.T, b []byte) {
+		if len(b) > 1<<20 {
+			t.Skip()
+		}
+		var a ovmAuditSummary
+		if err := json.Unmarshal(b, &a); err == nil {
+			_ = a.validate()
+		}
+	})
+}
+func TestCancelledInputParse(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "alloc")
+	must(t, os.WriteFile(path, []byte(`{}`), 0600))
+	ctx, cancel := context.WithCancel(t.Context())
+	cancel()
+	if _, _, err := readAlloc(ctx, path); !errors.Is(err, context.Canceled) {
+		t.Fatal(err)
+	}
+}
+
+func TestInputSnapshotDigests(t *testing.T) {
+	f := newFixture(t, 0, 0)
+	dir := t.TempDir()
+	o := f.options(filepath.Join(dir, "out"))
+	o.RetainList, o.Alloc = filepath.Join(dir, "retain"), filepath.Join(dir, "alloc")
+	o.AuditSummary = writeAudit(t, f, 0)
+	must(t, os.WriteFile(o.RetainList, []byte(eoa.Hex()+"\n"), 0600))
+	must(t, os.WriteFile(o.Alloc, []byte(" \n{}\n "), 0600))
+	paths := map[string]string{"ovm-events": o.OVMEvents, "runtime": o.WrappedEtherCode, "retain": o.RetainList, "alloc": o.Alloc, "audit": o.AuditSummary}
+	in, err := loadInputs(t.Context(), o)
+	must(t, err)
+	digests := in.digests()
+	if len(digests) != len(paths) {
+		t.Fatal("missing input digest")
+	}
+	previous := ""
+	for i, digest := range digests {
+		data, err := os.ReadFile(paths[digest.Name])
+		must(t, err)
+		if digest.SHA256 != sha256.Sum256(data) || digest.Name <= previous {
+			t.Fatal("digest does not represent original bytes in canonical order")
+		}
+		previous = digest.Name
+		digests[i].SHA256[0] ^= 1
+	}
+	for i, digest := range in.digests() {
+		if digest == digests[i] {
+			t.Fatal("digest consumer mutated the input snapshot")
+		}
+	}
+}
