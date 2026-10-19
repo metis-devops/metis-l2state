@@ -238,6 +238,64 @@ func TestMigrationRoundTrip(t *testing.T) {
 	}
 }
 
+func TestMigrationReceiveOnlyEOAFromPreimage(t *testing.T) {
+	// Keep the recipient's preimage and token balance, but remove its only
+	// Approval relationship. It has no source account or Transfer-from record.
+	f := newFixtureWithStorage(t, 0, 0, func(storage map[common.Hash]common.Hash) {
+		delete(storage, allowanceKey(eoa, automatic))
+	})
+	events := f.events(t)
+	events.Allowances = []ovmevents.Allowance{}
+	must(t, ovmevents.Save(f.eventPath(), events))
+	events = f.events(t)
+	if len(events.Allowances) != 0 || slices.Contains(events.Members, eoa) {
+		t.Fatal("receive-only EOA must not appear in event relationships")
+	}
+	before := filesDigest(t, f.source)
+	func() {
+		s, err := openSource(f.source, 16, 16)
+		must(t, err)
+		defer func() { must(t, s.close()) }()
+		h := crypto.Keccak256Hash(eoa[:])
+		preimage, err := s.db.Get(append([]byte(preimageKeyPrefix), h[:]...))
+		must(t, err)
+		if !bytes.Equal(preimage, eoa[:]) {
+			t.Fatal("missing recipient address preimage")
+		}
+		accounts, err := trie.New(trie.StateTrieID(s.head.StateRoot), s.nodes)
+		must(t, err)
+		raw, err := accounts.Get(h[:])
+		must(t, err)
+		if len(raw) != 0 {
+			t.Fatal("recipient must not exist in source account trie")
+		}
+	}()
+
+	out := filepath.Join(t.TempDir(), "state.bin")
+	_, err := Migrate(t.Context(), f.options(out))
+	must(t, err)
+	accounts, storage, _ := readArtifact(t, out)
+	a, ok := accounts[eoa]
+	if !ok {
+		t.Fatal("receive-only EOA missing from statefile")
+	}
+	if a.Balance == nil || a.Balance.Cmp(big.NewInt(11)) != 0 {
+		t.Fatalf("recipient balance %v, want 11", a.Balance)
+	}
+	if a.Nonce != 0 || a.CodeHash != types.EmptyCodeHash || len(storage[eoa]) != 0 {
+		t.Fatalf("recipient must have zero nonce, no code and no storage: %+v, slots %d", a, len(storage[eoa]))
+	}
+	if _, ok := accounts[ovmAddress]; !ok {
+		t.Fatal("OVM account missing from statefile")
+	}
+	if _, ok := storage[ovmAddress][balanceKey(eoa)]; ok {
+		t.Fatal("recipient token balance slot was not removed")
+	}
+	if filesDigest(t, f.source) != before {
+		t.Fatal("source mutated")
+	}
+}
+
 func TestRetainAndAlloc(t *testing.T) {
 	f := newFixture(t, 3, 0)
 	dir := t.TempDir()
