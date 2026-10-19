@@ -6,7 +6,7 @@ require (
 	github.com/ethereum/go-ethereum v1.17.8
 	github.com/gofrs/flock v0.12.1
 	github.com/holiman/uint256 v1.3.2
-	github.com/klauspost/compress v1.20.1
+	github.com/klauspost/compress v1.20.3
 	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 	golang.org/x/sys v0.49.0
 )
