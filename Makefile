@@ -3,15 +3,15 @@ build:
 	go build -trimpath -o bin/ ./cmd/...
 test:
 	go test ./...
-	go test ./testdata/dumpprofile
+	go test ./testdata/dumpprofile ./testdata/restorestate
 test-race-root:
-	go test -race ./...
+	go test -race ./... ./testdata/restorestate
 test-race: test-race-root
 	$(MAKE) -C testdata/legacyintegration test-race
 lint:
-	golangci-lint run
+	golangci-lint run ./... ./testdata/dumpprofile ./testdata/restorestate
 fmt-check:
-	test -z "$$(gofmt -l cmd internal statefile testdata/readercheck testdata/verifyfile testdata/dumpprofile)"
+	test -z "$$(gofmt -l cmd internal statefile testdata/readercheck testdata/verifyfile testdata/dumpprofile testdata/restorestate)"
 	go mod tidy -diff
 fixture-check:
 	$(MAKE) -C testdata/legacyintegration check

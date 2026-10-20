@@ -1,4 +1,4 @@
-// dumpprofile profiles one raw export from an already prepared fixture.
+// dumpprofile profiles one dump or migration from an already prepared fixture.
 // It is a diagnostic consumer, not an l2state CLI command. Verify its artifact
 // independently after this process exits; never include verification in profiles.
 package main
@@ -10,6 +10,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"os/signal"
 	"path/filepath"
 	"runtime"
 	"runtime/pprof"
@@ -28,28 +29,51 @@ func run() error {
 	source := flag.String("source", "", "stopped fixture source")
 	out := flag.String("out", "", "new artifact path")
 	dir := flag.String("profiles", "", "new profile directory")
-	mode := flag.String("mode", "cpu", "cpu, locks, or alloc")
+	mode := flag.String("mode", "cpu", "cpu, locks, alloc, or all")
+	sampleBytes := flag.Int("allocation-sample-bytes", 4096, "allocation profile sample interval")
+	blockRate := flag.Int("block-rate-ns", 1, "block profile sample interval")
+	mutexFraction := flag.Int("mutex-fraction", 1, "mutex profile sample fraction")
+	cache := flag.Int("cache-mb", 64, "source LevelDB cache MiB")
+	handles := flag.Int("handles", 64, "source LevelDB file handles")
 	workers := flag.Int("workers", 8, "worker limit")
+	command := flag.String("command", "dump", "dump or migrate")
+	events := flag.String("ovm-events", "", "RPC checkpoint for migrate")
+	audit := flag.String("audit", "", "optional migration audit")
+	runtimeCode := flag.String("runtime", "", "wrapped runtime for migrate")
 	codec := flag.String("compression", "zstd", "artifact compression")
 	flag.Parse()
 	if *source == "" || *out == "" || *dir == "" {
 		return errors.New("source, out and profiles are required")
 	}
-	if *mode != "cpu" && *mode != "locks" && *mode != "alloc" {
+	if *mode != "cpu" && *mode != "locks" && *mode != "alloc" && *mode != "all" {
 		return errors.New("invalid profile mode")
 	}
 	if err := os.Mkdir(*dir, 0700); err != nil {
 		return err
 	}
-	stop, err := startProfile(*mode, *dir)
+	stop, err := startProfile(*mode, *dir, *sampleBytes, *blockRate, *mutexFraction)
 	if err != nil {
 		return err
 	}
 	var before, after runtime.MemStats
 	runtime.ReadMemStats(&before)
-	result, dumpErr := migration.Dump(context.Background(), migration.DumpOptions{
-		Source: *source, Output: *out, Workers: *workers, CacheMB: 64, Handles: 64, Compression: *codec,
-	})
+	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt)
+	defer cancel()
+	var result migration.Result
+	var dumpErr error
+	switch *command {
+	case "dump":
+		result, dumpErr = migration.Dump(ctx, migration.DumpOptions{
+			Source: *source, Output: *out, Workers: *workers, CacheMB: *cache, Handles: *handles, Compression: *codec,
+		})
+	case "migrate":
+		result, dumpErr = migration.Migrate(ctx, migration.Options{
+			Source: *source, Output: *out, Workers: *workers, CacheMB: *cache, Handles: *handles, Compression: *codec,
+			OVMEvents: *events, AuditSummary: *audit, WrappedEtherCode: *runtimeCode, Progress: os.Stderr,
+		})
+	default:
+		dumpErr = errors.New("invalid command")
+	}
 	runtime.ReadMemStats(&after)
 	if err := errors.Join(dumpErr, stop()); err != nil {
 		return err
@@ -66,8 +90,22 @@ func run() error {
 		after.NumGC - before.NumGC, after.PauseTotalNs - before.PauseTotalNs, after.HeapAlloc, runtime.MemProfileRate})
 }
 
-func startProfile(mode, dir string) (func() error, error) {
+func startProfile(mode, dir string, sampleBytes, blockRate, mutexFraction int) (func() error, error) {
 	switch mode {
+	case "all":
+		cpu, err := startProfile("cpu", dir, sampleBytes, blockRate, mutexFraction)
+		if err != nil {
+			return nil, err
+		}
+		locks, err := startProfile("locks", dir, sampleBytes, blockRate, mutexFraction)
+		if err != nil {
+			return nil, errors.Join(err, cpu())
+		}
+		alloc, err := startProfile("alloc", dir, sampleBytes, blockRate, mutexFraction)
+		if err != nil {
+			return nil, errors.Join(err, cpu(), locks())
+		}
+		return func() error { return errors.Join(cpu(), locks(), alloc()) }, nil
 	case "cpu":
 		f, err := os.Create(filepath.Join(dir, "cpu.pprof"))
 		if err != nil {
@@ -78,15 +116,15 @@ func startProfile(mode, dir string) (func() error, error) {
 		}
 		return func() error { pprof.StopCPUProfile(); return f.Close() }, nil
 	case "locks":
-		runtime.SetMutexProfileFraction(1)
-		runtime.SetBlockProfileRate(1)
+		runtime.SetMutexProfileFraction(mutexFraction)
+		runtime.SetBlockProfileRate(blockRate)
 		return func() error {
 			runtime.SetMutexProfileFraction(0)
 			runtime.SetBlockProfileRate(0)
 			return errors.Join(saveProfile(dir, "mutex"), saveProfile(dir, "block"))
 		}, nil
 	default:
-		runtime.MemProfileRate = 4096
+		runtime.MemProfileRate = sampleBytes
 		return func() error {
 			// Flush completed allocation samples. This GC is outside Dump and
 			// outside the MemStats delta; profiled runs are never timed samples.

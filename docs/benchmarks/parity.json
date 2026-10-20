@@ -1,16 +1,16 @@
 {
   "source_before": {
-    "sha256": "962b43ab944dd2cd3b11c882010b9d1da1313a36fd7f706328c6c5d549fe03b5",
+    "sha256": "859d1061ff2f88c300f21d6e28ee639622fa1ac280c8e9fdfbf22967ec60a06e",
     "files": [
       {
         "path": "000002.log",
         "size": 1578197,
-        "sha256": "45a92a5134fd808220861c620fa82ee0097a70ee0daae3922338a5a1feadba2b"
+        "sha256": "59f069bb691e9dfca2d8aec9ad6802f982f953d009350aa57c849ebe69b2014e"
       },
       {
         "path": "000003.ldb",
         "size": 3271010,
-        "sha256": "92553afe538317cd955d426e2c526611c2128dc84a167d97a4e8b6cce15ac21c"
+        "sha256": "2d52472a59749c887498a7e3ebef61d8f1b5536fcd298ce9c96a561f4e09deff"
       },
       {
         "path": "CURRENT",
@@ -25,7 +25,7 @@
       {
         "path": "LOG",
         "size": 760,
-        "sha256": "2cb2e4ee0f7be8194e037f613aedeebfbc7863b3f859d5cc6cf98c17740b9d4e"
+        "sha256": "e40120b50453a436297ecee5edf5a04d3fa3f49e5dbcb264a35362eb5e8efe74"
       },
       {
         "path": "MANIFEST-000000",
@@ -35,17 +35,17 @@
     ]
   },
   "source_after": {
-    "sha256": "962b43ab944dd2cd3b11c882010b9d1da1313a36fd7f706328c6c5d549fe03b5",
+    "sha256": "859d1061ff2f88c300f21d6e28ee639622fa1ac280c8e9fdfbf22967ec60a06e",
     "files": [
       {
         "path": "000002.log",
         "size": 1578197,
-        "sha256": "45a92a5134fd808220861c620fa82ee0097a70ee0daae3922338a5a1feadba2b"
+        "sha256": "59f069bb691e9dfca2d8aec9ad6802f982f953d009350aa57c849ebe69b2014e"
       },
       {
         "path": "000003.ldb",
         "size": 3271010,
-        "sha256": "92553afe538317cd955d426e2c526611c2128dc84a167d97a4e8b6cce15ac21c"
+        "sha256": "2d52472a59749c887498a7e3ebef61d8f1b5536fcd298ce9c96a561f4e09deff"
       },
       {
         "path": "CURRENT",
@@ -60,7 +60,7 @@
       {
         "path": "LOG",
         "size": 760,
-        "sha256": "2cb2e4ee0f7be8194e037f613aedeebfbc7863b3f859d5cc6cf98c17740b9d4e"
+        "sha256": "e40120b50453a436297ecee5edf5a04d3fa3f49e5dbcb264a35362eb5e8efe74"
       },
       {
         "path": "MANIFEST-000000",
@@ -114,14 +114,14 @@
   "accounts": 10000,
   "comparison": "bytes",
   "binary_sha256": {
-    "baseline": "57b9bccb7e9a82c83c5cd4aa5e131439b5f11cc78156058e5198e79a4849bcb6",
-    "current-memory": "a1ba91d2fb091eb2001c55810b6ad5162932b77db0105ca62998bee5616fec84",
-    "current-none": "a1ba91d2fb091eb2001c55810b6ad5162932b77db0105ca62998bee5616fec84"
+    "baseline": "5534946f160de091e644ebc9651f2f9e4873fff43ea8c9c83119e5a05ffcaed8",
+    "current-memory": "6b80aa488afaf80fba67261cc4783a2b5f5ef9ea2a9d2028c3f6655244aafbc8",
+    "current-none": "6b80aa488afaf80fba67261cc4783a2b5f5ef9ea2a9d2028c3f6655244aafbc8"
   },
   "verifier_sha256": {
-    "baseline": "3460885f2c03f21fe1e780b29fc9b6249de7e8851bb253b4dcffb7fb45b2e781",
-    "current-memory": "3460885f2c03f21fe1e780b29fc9b6249de7e8851bb253b4dcffb7fb45b2e781",
-    "current-none": "3460885f2c03f21fe1e780b29fc9b6249de7e8851bb253b4dcffb7fb45b2e781"
+    "baseline": "aae03797eb00a7ef266e950a9cbf1bb18eaa3677a0050ddccf0b562323d8b315",
+    "current-memory": "aae03797eb00a7ef266e950a9cbf1bb18eaa3677a0050ddccf0b562323d8b315",
+    "current-none": "aae03797eb00a7ef266e950a9cbf1bb18eaa3677a0050ddccf0b562323d8b315"
   },
   "observations": [
     {
@@ -6754,11 +6754,11 @@
         }
       }
     ],
-    "baseline_ref": "btree-lock-task-start-76672b21304c",
+    "baseline_ref": "c61d52a7ece259526edff5f0ad5a254b0619805c",
     "comparison": "bytes and complete summaries",
     "source_unchanged": true,
     "independently_verified": true,
     "test_source": "package migration\nimport(\"testing\";\"math/big\";\"path/filepath\";\"fmt\";\"crypto/sha256\";\"os\";\"encoding/json\";\"github.com/ethereum/go-ethereum/common\";\"github.com/ethereum/go-ethereum/crypto\";\"github.com/holiman/uint256\")\nfunc TestMetadataReviewBoundary(t *testing.T){\n for _, length := range []uint64{31,32,1<<20,(1<<20)+1}{\n  f:=newFixtureWithStorage(t,0,0,func(storage map[common.Hash]common.Hash){\n   for _, n:=range []byte{3,4}{\n    var slot,word common.Hash;slot[31]=n\n    if length<32{word[0]='x';word[31]=byte(length*2)}else{\n     v:=new(big.Int).SetUint64(length);word=common.BigToHash(v.Add(v.Lsh(v,1),big.NewInt(1)))\n     for _,off:=range []uint64{0,(length-1)/32}{b:=new(uint256.Int).SetBytes(crypto.Keccak256(slot[:]));k:=b.Add(b,uint256.NewInt(off)).Bytes32();storage[crypto.Keccak256Hash(k[:])]=common.HexToHash(\"0x03\")}\n    };storage[crypto.Keccak256Hash(slot[:])]=word\n   }\n  })\n  before:=filesDigest(t,f.source)\n  for _,codec:=range []string{\"none\",\"zstd\"}{for _,cache:=range []string{\"memory\",\"none\"}{for _,workers:=range []int{2,16}{for _,command:=range []string{\"migrate\",\"dump\"}{\n   path:=filepath.Join(t.TempDir(),\"state\");var result Result;var err error\n   if command==\"migrate\"{o:=f.options(path);o.Compression=codec;o.CodeCache=cache;o.Workers=workers;result,err=Migrate(t.Context(),o)}else{o:=dumpOptions(f,path);o.Compression=codec;o.CodeCache=cache;o.Workers=workers;result,err=Dump(t.Context(),o)}\n   must(t,err);_,_,verified:=readArtifact(t,path);if verified!=result.Summary{t.Fatal(\"verification mismatch\")};b,err:=os.ReadFile(path);must(t,err)\n   row:=map[string]any{\"case\":fmt.Sprintf(\"%d/%s/%s/%d/%s\",length,codec,cache,workers,command),\"sha256\":fmt.Sprintf(\"%x\",sha256.Sum256(b)),\"summary\":result.Summary};data,err:=json.Marshal(row);must(t,err);t.Logf(\"BOUNDARY %s\",data)\n  }}}}\n  if before!=filesDigest(t,f.source){t.Fatal(\"source changed\")}\n }\n}\n",
-    "method": "Fresh baseline and candidate overlay test processes, 64 cases each; independent readback and source digest check outside timing"
+    "method": "same-campaign independent reader verification and source digests via Go overlays; outside timing"
   }
 }

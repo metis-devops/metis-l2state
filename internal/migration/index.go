@@ -93,11 +93,19 @@ func (s *source) indexRecords(ctx context.Context, l limiter, prefix []byte, vis
 	for {
 		var next bool
 		err := l.run(ctx, func() error {
-			next = it.Next()
-			if !next {
-				return it.Error()
+			for range iteratorReadBatch {
+				if err := ctx.Err(); err != nil {
+					return err
+				}
+				next = it.Next()
+				if !next {
+					return it.Error()
+				}
+				if err := visit(it.Key(), it.Value()); err != nil {
+					return err
+				}
 			}
-			return visit(it.Key(), it.Value())
+			return nil
 		})
 		if err != nil {
 			return fmt.Errorf("node index %q: %w", prefix, err)

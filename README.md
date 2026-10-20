@@ -361,6 +361,32 @@ publication builds separate multi-platform images at
 corresponding published tag in place of the local image names above. Local tests do not
 establish remote CI, published images or production-snapshot acceptance.
 
+For operator-provided original-state dumps, the test-only restorer creates a
+new, disposable legacy LevelDB containing current trie nodes, bare-hash bytecode,
+preimages, genesis/head headers and head mappings. It does not restore historical
+blocks, receipts, genesis state, or a runnable full node. Inputs are read-only;
+an existing destination is rejected and ordinary failures remove the incomplete
+new database. Storage keys are inserted as already-hashed keys. The optional
+`--target` compares the complete target header RLP with the dump's embedded RLP.
+
+```sh
+go run ./testdata/restorestate --dump fixtures/dump.zstd \
+  --preimages fixtures/preimages.rlp.gz --genesis fixtures/genesis-header.json \
+  --target fixtures/target-block-header.json --out /new/restored-chaindata
+(cd testdata/legacyintegration && \
+  L2STATE_RESTORED_SOURCE=/new/restored-chaindata \
+  go test -count=1 -v -run '^TestRestoredLegacyState$')
+```
+
+`testdata/dumpprofile` accepts `--command migrate`, `--ovm-events`, `--audit`
+and `--runtime` to profile a migration; CPU, lock and allocation profiles are
+collected outside timing. `--mode all` collects them together with configurable
+sampling intervals. `scripts/benchmark_mainnet.py` compares two CLI binaries in alternating
+fresh processes against one stopped restored fixture, verifies every output
+outside timing, compares exact bytes and complete summaries, and checks source
+and input immutability. Reconstruction layout and local cache state differ from
+the original node, so these measurements do not establish production performance.
+
 The [latest benchmark report](docs/benchmarks/README.md) includes paired timings,
 CPU, peak RSS, allocation measurements and independent artifact verification.
 Only the latest completed benchmark suite and its raw results are retained.

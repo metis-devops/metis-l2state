@@ -18,6 +18,10 @@ const partitions = 16
 const storageThreshold = 1024
 const streamAhead = 64
 
+// Amortize permit handoffs while keeping producer lookahead fixed. Every
+// permit is released before a batch is sent to the bounded output queue.
+const iteratorReadBatch = 32
+
 type limiter chan struct{}
 
 func (l limiter) run(ctx context.Context, f func() error) error {
@@ -101,33 +105,47 @@ func (s *source) producePartition(ctx context.Context, id *trie.ID, p byte, l li
 	if err != nil {
 		return err
 	}
+	var batch [iteratorReadBatch]leaf
 	for {
-		var v leaf
-		var next bool
+		count := 0
+		ended := false
 		err := l.run(ctx, func() error {
-			next = it.Next()
-			if !next {
-				return it.Err
-			}
-			if len(it.Key) != 32 || len(it.Value) > 110 {
-				return errors.New("invalid trie leaf framing")
-			}
-			v = leaf{common.Hash(it.Key), bytes.Clone(it.Value)}
-			return nil
+			var err error
+			count, ended, err = readLeafBatch(ctx, it, batch[:])
+			return err
 		})
 		if err != nil {
 			return err
 		}
-		if !next {
-			return nil
+		for i := range count {
+			select {
+			case out <- batch[i]:
+				batch[i] = leaf{}
+			case <-ctx.Done():
+				return ctx.Err()
+			}
 		}
-		select {
-		case out <- v:
-		case <-ctx.Done():
-			return ctx.Err()
+		if ended {
+			return nil
 		}
 	}
 }
+func readLeafBatch(ctx context.Context, it *trie.Iterator, batch []leaf) (int, bool, error) {
+	for i := range batch {
+		if err := ctx.Err(); err != nil {
+			return i, false, err
+		}
+		if !it.Next() {
+			return i, true, it.Err
+		}
+		if len(it.Key) != 32 || len(it.Value) > 110 {
+			return i, false, errors.New("invalid trie leaf framing")
+		}
+		batch[i] = leaf{common.Hash(it.Key), bytes.Clone(it.Value)}
+	}
+	return len(batch), false, nil
+}
+
 func (s *source) storage(ctx context.Context, owner, root common.Hash, l limiter, visit func(common.Hash, common.Hash) error) error {
 	if root == types.EmptyRootHash {
 		return nil

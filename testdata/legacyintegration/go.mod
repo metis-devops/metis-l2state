@@ -5,6 +5,7 @@ go 1.27.2
 require (
 	github.com/MetisProtocol/mvm/l2geth v0.0.0-20261015043324-c8ff7181c36d
 	github.com/ethereum/go-ethereum v1.17.5
+	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7
 )
 
 require (
@@ -31,7 +32,6 @@ require (
 	github.com/rs/cors v1.8.2 // indirect
 	github.com/steakknife/bloomfilter v0.0.0-20180922174646-6819c0d2a570 // indirect
 	github.com/steakknife/hamming v0.0.0-20180906055917-c99c65617cd3 // indirect
-	github.com/syndtr/goleveldb v1.0.1-0.20210819022825-2ae1ddf74ef7 // indirect
 	golang.org/x/crypto v0.54.0 // indirect
 	golang.org/x/sys v0.48.0 // indirect
 	gopkg.in/natefinch/npipe.v2 v2.0.0-20160621034901-c1b8fa8bdcce // indirect

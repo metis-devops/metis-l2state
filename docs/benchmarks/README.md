@@ -1,177 +1,197 @@
-# Latest local synthetic measurements — 2026-10-19
+# Latest local measurements — 2026-10-20
 
-This complete suite compares the task-start B+tree implementation using blocking `outputMu.Lock` with immediate concurrent-output rejection using `TryLock`. Already-canceled output now returns its context error before ownership and leaves frozen state available. Both sides use the same B+trees, ordered construction, direct OVM mutation and acknowledged batch release. This suite measures the admission fix; it does not repeat the older map-versus-tree comparison. Format v1, dependencies, source validation, audit, retention, alloc and publication semantics are unchanged. The frozen corpus was not regenerated.
+This campaign restores the operator-provided mainnet state at height **23,182,122**, profiles migration, and compares bounded iterator batching against clean task-start HEAD `c61d52a7ece259526edff5f0ad5a254b0619805c`. The change amortizes worker-permit acquisition over at most 32 trie leaves or preimage records. Every record remains validated and cancellation checked. Producers release permits before queue sends; the 64-entry queues remain bounded, with up to 32 additional producer-local leaves per partition. Source validation, OVM accounting, ordered B+trees, code IDs, acknowledged release, alloc, format v1 and publication semantics are unchanged. Dependency versions and the frozen corpus were not changed.
 
-## Baseline and environment
+## Baseline, environment and scope
 
-Baseline `btree-lock-task-start-76672b21304c` is the complete task-start working tree, including staged, unstaged and untracked B+tree files, over HEAD `1b7bc72e6f77c9611612e182dade891c258715e8`. It was exported to an isolated temporary directory before edits. `paired.json.baseline_identity` preserves its reconstruction patch, SHA-256 and source manifest; historical benchmark reports are excluded. The user's index was preserved. The reference migration repository was not used or modified. Candidate sources are identified by `paired.json.source_sha256`; no source changed during timing.
+Apple M3 Max (Mac15,9), 48 GiB RAM, macOS 27.0.1 build 26A434, Go 1.27.2 darwin/arm64. `GOGC`, `GOMEMLIMIT`, `GOMAXPROCS` and `GOEXPERIMENT` were unset. Both sides use `GOFLAGS=-buildvcs=false`, CLI/verifier builds use `go build -trimpath`, and allocation tests use `go test -c`. `paired.json` retains environment, clean baseline identity, source manifests and binary hashes. The reference migration repository was not used or modified.
 
-Apple M3 Max, 48 GiB physical memory; `macOS-27.0.1-arm64-arm-64bit-Mach-O`; `go version go1.27.2 darwin/arm64`. Exact OS build, runtime environment and Go environment are retained in paired.json. `GOGC`, `GOMEMLIMIT`, `GOMAXPROCS` and `GOEXPERIMENT` were unset. Both sides use `GOFLAGS=-buildvcs=false`; CLI/verifier builds use `go build -trimpath`, test executables use `go test -c`. Test executable identities may include checkout paths.
+All timed invocations run serially in fresh processes. Caches are not flushed; the OS page cache is shared. Fixture preparation, input hashing, independent output verification and artifact deletion are outside timing. Every successful sample, including first and slow samples, is retained. Peak RSS is measured per process by the OS; synthetic output/scratch disk peaks are sampled every 20 ms and are not exact maxima. No CI/race tests ran concurrently with timing. These are local reconstructed-mainnet-data and synthetic measurements; no remote CI, original-node layout benchmark or production migration was run.
 
-| Executable | SHA-256 |
+## Reconstruction and correctness
+
+`testdata/restorestate` consumes the original-state dump in order and constructs a new legacy LevelDB with hashed account/storage tries, legacy bare-hash code, all 32,649,233 exported preimages, canonical genesis/target header RLP and head mappings. The rebuilt DB uses the legacy Bloom filter. The supplied target header must match the embedded dump header byte-for-byte. The database is closed before all subsequent strictly read-only operations. This restores current state only: historical blocks, receipts and the genesis trie are not reconstructed, and it is not a runnable full-node backup.
+
+| Identity | Value |
 | --- | --- |
-| current-memory CLI | a1ba91d2fb091eb2001c55810b6ad5162932b77db0105ca62998bee5616fec84 |
-| current-none CLI | a1ba91d2fb091eb2001c55810b6ad5162932b77db0105ca62998bee5616fec84 |
-| baseline CLI | 57b9bccb7e9a82c83c5cd4aa5e131439b5f11cc78156058e5198e79a4849bcb6 |
-| current-memory verifier | 3460885f2c03f21fe1e780b29fc9b6249de7e8851bb253b4dcffb7fb45b2e781 |
-| current-none verifier | 3460885f2c03f21fe1e780b29fc9b6249de7e8851bb253b4dcffb7fb45b2e781 |
-| baseline verifier | 3460885f2c03f21fe1e780b29fc9b6249de7e8851bb253b4dcffb7fb45b2e781 |
-| current-memory allocation test | 57f866da72002a1e2b6e694839d35d1b8ca36ae07ac51d26b130b881d6661f9f |
-| current-none allocation test | 57f866da72002a1e2b6e694839d35d1b8ca36ae07ac51d26b130b881d6661f9f |
-| baseline allocation test | 1f73de66f547fa917e1db04a4f0fed6fee9b32b34c7b4d919e62fa02cde11723 |
+| Height | 23,182,122 |
+| Head hash | `0x31ccdca9cb607cdde996f7a8a82519bc873ffff68b898a3d8472069fc5724226` |
+| Source root | `0x3bfc6320e507cc55567c2e0e524a33039af91706a2daefc627827f4992735460` |
+| Restored accounts / slots / distinct codes | 1,862,948 / 30,638,364 / 19,882 |
+| Restored code bytes | 160,962,644 |
 
-## Method and correctness
+The independently pinned old l2geth trie implementation read every restored account, storage trie and referenced code, verified address preimages and canonical head identity, and matched these inventories (296.35 seconds, outside timing). Original fixture and restored DB file digests remained unchanged. All supplied input digests and the independent readback log are retained in `paired.json`.
 
-- [paired.json](paired.json): all 558 timed CLI samples, 108 code-index samples, complete summaries, source manifests and executable identities.
-- [allocations.txt](allocations.txt): all 558 fresh-process allocation samples and 108 code-index samples.
-- [parity.json](parity.json): 60 retain/alloc artifacts and 64 fresh baseline/candidate metadata-boundary pairs (128 artifacts), including the boundary test source.
+Mainnet-data migrations use the supplied RPC events and audit report, **test runtime `internal/migration/testdata/wrapped.hex`**, no alloc, no manually retained addresses, eight workers, zstd and memory code cache. They test conversion/accounting on real state; the resulting artifact is not a deployment-ready runtime selection. Source header RLP retains the original state root.
 
-All 31 CLI configurations use six rounds and all six baseline/current-memory/current-none order permutations. Each invocation runs in a fresh process against the same stopped synthetic fixture. Runs are serial, with no CI/race tests or other performance campaigns during timing. Caches are not flushed. Fixture generation, hashing and independent readback are outside timing. Every sample, including first and slow runs, is retained. OS peak RSS is measured per process; sampled disk peaks are not exact peaks.
+All complete profiled and timed mainnet outputs are byte-identical and independently verified: SHA-256 `c095eefb1cb6a548e2fbc8a07d0d2ce49afb50e521335ef68a75ccacca75968e`, 1,234,263,400 bytes; converted/final root `0xed5b0350bbb9e4cfa612229ad77c6aefd035511f3427999e219dcfdf6260f2ae`; 2,219,875 accounts, 29,288,487 slots, 19,882 codes and 160,960,292 code bytes. Complete conversion accounting is retained in raw summaries.
 
-Baseline uses command defaults (migrate memory, dump none); candidate cache modes are explicit. `none` in configuration names means compression. `1k-bytecode` uses 1,024 distinct 65,536-byte codes; other distinct-code configurations use 10-byte code. `32x1025-storage` crosses the storage partition threshold. `1m-storage` has 1,000,000 slots. `-alloc` is a no-op existing-account alloc; `-overlay` clears code and edits storage.
+## Profiles and bottlenecks
 
-All 558 timed artifacts match baseline bytes and complete summaries and pass independent Reader verification. All 60 retain/alloc artifacts also match across workers 2/8, both codecs and both candidate cache modes. The 64 metadata-boundary pairs match at lengths 31, 32, 1 MiB and 1 MiB + 1 across migrate/dump, workers 2/16, both codecs and cache modes. Source-file digests remain unchanged. Boundary checks ran separately outside timing.
+Profiles used the same 512 MiB cache / 2,048 handles / eight workers on both sides; CPU, allocation, heap, mutex and block profiles were collected together. Baseline source validation took 509.603 s of 563.624 s total (~90%); conversion 4.172 s and output 48.671 s. Candidate totals were 515.974 s, including 462.069 s validation, 4.198 s conversion and 48.478 s output. These single instrumented observations are diagnostics, not paired speedup estimates.
 
-Local `make ci`, `make test-race`, six Python benchmark tests and `git diff --check` passed. New regressions fail against the baseline and pass with the fix; 25 race-enabled repetitions cover blocked Writer ownership, immediate rejection of live/canceled/expired contenders, successful and failed owner completion, and canceled admission preserving the snapshot for a later valid output. Existing cancellation, ordering, queue bounds, acknowledged release and independent legacy reconstruction tests remain. This is local synthetic and pinned integration evidence; no remote CI or production snapshot was run.
+Baseline CPU samples attributed 57.43% to `syscall.rawsyscalln`, 19.57% to `pthread_cond_wait` and 12.89% to `pthread_cond_signal`; LevelDB Get accounted for 54.24% cumulative sampled CPU. Sampled allocation space was 114.38 GiB, including 27.4 GiB in LevelDB `newBlockIter`. This points to source reads/decompression and repeated scheduling/permit handoffs as the useful targets, rather than OVM conversion. Candidate CPU samples reduced cumulative pthread wait from 155.84 s to 59.36 s and signal from 102.63 s to 49.37 s, while raw syscall samples remained approximately 457 s / 455 s. This supports the scheduling-overhead diagnosis without claiming fewer database reads. Aggregated lock/block times include concurrent waiting and bounded-queue backpressure; they are not wall time.
 
-## Performance and peak memory
+Full MemStats allocated bytes were 122,745,755,544 baseline and 122,605,979,000 candidate; mallocs 1,765,515,647 and 1,761,871,335. Allocation volume is essentially unchanged. Post-run heap values are not peak memory. Profile text, sampling settings, logs and profile hashes are retained in `paired.json.query_analysis`.
 
-Values are medians of six samples: wall and CPU (user + system) in milliseconds, per-process peak RSS in MiB. B/M/N means baseline/current-memory/current-none. Percentages compare medians. For the admission change compare M for migrate and N for dump; other comparisons also change cache policy. CLI samples perform one output each, so immediate rejection latency is established by regression tests, not these throughput measurements.
+An initial 64 MiB / 64-handle diagnostic was interrupted after at least 581.146 seconds while still validating. It produced no complete migration artifact or usable completed CPU profile. Its log, elapsed lower bound and system sample are preserved as an incomplete diagnostic, not included in successful timed statistics. An early unfiltered reconstruction was superseded by a separately created Bloom-filter DB; the source was never repaired or compacted.
 
-migrate: default-cache wall median changes range from -2.44% to +4.22%; peak-RSS median changes range from -3.45% to +1.01%.
+## Mainnet-data paired timings
 
-dump: default-cache wall median changes range from -0.37% to +1.57%; peak-RSS median changes range from -0.94% to +1.38%.
+Two rounds use forward/reverse order: baseline → current → baseline-control, then baseline-control → current → baseline. Baseline and current use identical 8,192 MiB cache / 4,096 handle budgets. Baseline-control uses the same baseline binary with 512 MiB / 2,048 handles. The resource comparison changes both budgets together and cannot attribute their individual effects. With only two rounds these measurements describe this machine and restored layout; they do not establish broad statistical confidence. Defaults remain unchanged.
 
-The admission check runs once per export and does not change tree storage or the main traversal. Treat timing/RSS variation as local measurements, not a demonstrated throughput or memory optimization. Dump is an unchanged-policy control. There is no forced GC, hard RSS bound or production performance claim.
-
-| Configuration | Wall ms B / M / N | Wall Δ M / N | CPU ms B / M / N | Peak RSS MiB B / M / N | RSS Δ M / N |
+| Variant | Cache MiB / handles | All wall samples (s) | Median wall (s) | Median CPU (s) | Median peak RSS (GiB) |
 | --- | --- | --- | --- | --- | --- |
-| 1k-bytecode-w8-zstd | 267.67 / 267.41 / 392.03 | -0.10% / +46.46% | 481.93 / 481.25 / 597.98 | 323.88 / 324.39 / 200.20 | +0.16% / -38.19% |
-| 1k-bytecode-w8-none | 251.35 / 251.61 / 374.38 | +0.10% / +48.95% | 462.85 / 463.51 / 579.33 | 282.84 / 285.69 / 179.45 | +1.01% / -36.55% |
-| 10k-w2-zstd | 141.66 / 141.76 / 141.69 | +0.07% / +0.02% | 298.93 / 300.48 / 299.30 | 54.72 / 55.05 / 54.55 | +0.60% / -0.30% |
-| 10k-w8-zstd | 135.75 / 139.55 / 138.19 | +2.80% / +1.80% | 344.16 / 355.50 / 345.45 | 55.98 / 55.96 / 55.16 | -0.04% / -1.48% |
-| 10k-w8-none | 135.14 / 137.08 / 136.36 | +1.43% / +0.90% | 341.28 / 350.00 / 346.67 | 54.63 / 54.16 / 53.06 | -0.86% / -2.87% |
-| 100k-w8-zstd | 1480.51 / 1479.24 / 1500.52 | -0.09% / +1.35% | 3665.57 / 3616.99 / 3695.15 | 260.91 / 260.62 / 258.51 | -0.11% / -0.92% |
-| 10k-codes-w8-zstd | 179.66 / 175.27 / 199.63 | -2.44% / +11.11% | 519.93 / 511.29 / 544.64 | 74.19 / 72.83 / 75.52 | -1.83% / +1.80% |
-| 10k-codes-w8-none | 166.53 / 167.89 / 186.71 | +0.81% / +12.12% | 495.69 / 510.78 / 527.02 | 60.32 / 59.83 / 58.99 | -0.82% / -2.20% |
-| 100k-codes-w8-zstd | 1936.89 / 1931.23 / 2205.63 | -0.29% / +13.88% | 5222.32 / 5217.96 / 5451.64 | 301.68 / 300.96 / 299.79 | -0.24% / -0.63% |
-| 100k-codes-w8-none | 1891.35 / 1971.22 / 2229.85 | +4.22% / +17.90% | 5223.51 / 5249.83 / 5599.44 | 309.22 / 308.80 / 295.73 | -0.13% / -4.36% |
-| 10k-codes-w8-zstd-alloc | 189.75 / 191.09 / 210.02 | +0.71% / +10.68% | 544.11 / 543.44 / 562.37 | 75.61 / 73.00 / 76.21 | -3.45% / +0.80% |
-| 10k-codes-w8-none-alloc | 185.36 / 186.34 / 206.02 | +0.53% / +11.14% | 549.50 / 548.77 / 567.01 | 59.53 / 59.88 / 59.55 | +0.59% / +0.04% |
-| 100k-codes-w8-zstd-alloc | 2312.46 / 2319.63 / 2652.79 | +0.31% / +14.72% | 6044.57 / 6038.64 / 6327.17 | 302.02 / 301.50 / 299.47 | -0.17% / -0.84% |
-| 100k-codes-w8-none-alloc | 2023.68 / 2051.88 / 2347.48 | +1.39% / +16.00% | 5435.17 / 5496.31 / 5836.68 | 310.01 / 309.28 / 305.41 | -0.23% / -1.48% |
-| 32x1025-storage-w8-zstd | 160.41 / 160.97 / 161.52 | +0.35% / +0.69% | 590.90 / 600.58 / 596.03 | 37.96 / 37.30 / 36.88 | -1.75% / -2.86% |
-| 1m-storage-w8-zstd | 16559.60 / 16349.84 / 16228.20 | -1.27% / -2.00% | 25230.24 / 24958.89 / 24786.35 | 341.51 / 338.95 / 337.38 | -0.75% / -1.21% |
-| 1m-storage-w8-none | 14956.27 / 14952.16 / 14953.87 | -0.03% / -0.02% | 23062.42 / 23013.68 / 23068.53 | 325.93 / 324.31 / 315.15 | -0.50% / -3.31% |
-| 1m-storage-w8-zstd-overlay | 15049.50 / 14979.47 / 14943.07 | -0.47% / -0.71% | 23492.24 / 23371.77 / 23306.78 | 339.89 / 338.86 / 337.81 | -0.30% / -0.61% |
-| dump-1k-bytecode-w8-zstd | 383.20 / 261.41 / 382.86 | -31.78% / -0.09% | 583.99 / 468.40 / 583.81 | 196.86 / 321.12 / 197.00 | +63.12% / +0.07% |
-| dump-1k-bytecode-w8-none | 368.99 / 245.01 / 367.64 | -33.60% / -0.37% | 566.98 / 450.72 / 564.67 | 176.88 / 283.19 / 176.47 | +60.11% / -0.23% |
-| dump-10k-w2-zstd | 114.33 / 115.03 / 115.28 | +0.61% / +0.83% | 242.95 / 242.72 / 244.00 | 52.55 / 52.55 / 52.20 | +0.00% / -0.68% |
-| dump-10k-w8-zstd | 101.90 / 100.83 / 101.94 | -1.05% / +0.03% | 272.02 / 269.90 / 271.30 | 56.12 / 56.84 / 56.32 | +1.29% / +0.36% |
-| dump-10k-w8-none | 95.38 / 95.97 / 96.88 | +0.62% / +1.57% | 264.92 / 269.74 / 268.81 | 42.39 / 43.17 / 42.98 | +1.84% / +1.38% |
-| dump-100k-w8-zstd | 1013.35 / 1002.35 / 1019.29 | -1.08% / +0.59% | 3498.86 / 3477.26 / 3501.97 | 208.21 / 210.27 / 208.51 | +0.99% / +0.14% |
-| dump-10k-codes-w8-zstd | 139.74 / 123.66 / 139.24 | -11.51% / -0.35% | 414.84 / 396.35 / 414.86 | 67.87 / 68.73 / 67.76 | +1.27% / -0.16% |
-| dump-10k-codes-w8-none | 130.80 / 113.69 / 131.00 | -13.09% / +0.15% | 413.99 / 399.56 / 415.34 | 50.78 / 51.41 / 50.41 | +1.23% / -0.72% |
-| dump-100k-codes-w8-zstd | 1684.55 / 1447.53 / 1699.45 | -14.07% / +0.88% | 5691.65 / 5473.79 / 5722.45 | 260.93 / 265.41 / 261.30 | +1.72% / +0.14% |
-| dump-100k-codes-w8-none | 1589.11 / 1350.51 / 1606.60 | -15.01% / +1.10% | 5594.35 / 5361.20 / 5619.80 | 239.89 / 241.41 / 240.17 | +0.63% / +0.12% |
-| dump-32x1025-storage-w8-zstd | 121.06 / 120.31 / 121.50 | -0.62% / +0.37% | 516.99 / 510.43 / 508.94 | 50.58 / 50.99 / 50.10 | +0.82% / -0.94% |
-| dump-1m-storage-w8-zstd | 13378.40 / 13341.54 / 13416.06 | -0.28% / +0.28% | 21397.42 / 21307.26 / 21446.85 | 213.47 / 213.15 / 213.55 | -0.15% / +0.04% |
-| dump-1m-storage-w8-none | 13457.18 / 13400.83 / 13413.84 | -0.42% / -0.32% | 21527.17 / 21383.63 / 21459.92 | 192.42 / 193.02 / 192.32 | +0.31% / -0.05% |
+| baseline-control | 512 / 2048 | 517.681 / 499.106 | 508.394 | 786.587 | 7.138 |
+| baseline | 8192 / 4096 | 386.160 / 332.409 | 359.285 | 633.799 | 18.968 |
+| current | 8192 / 4096 | 345.912 / 303.638 | 324.775 | 497.070 | 17.241 |
 
-## Slow samples and maximum reported peaks
+At the same resource budget, candidate median wall changes by -9.61%. Raising the baseline resource budget changes its median wall by -29.33%; this is a separate configuration tradeoff. The combined candidate/high-budget comparison against baseline-control changes wall by -36.12%. Full per-sample CPU, peak RSS, commands, phase logs and artifact identities are in `paired.json.mainnet`.
 
-All samples remain in paired.json. The following maxima are reported separately from medians; no outliers were discarded.
+## Complete synthetic suite
 
-| Implementation | Slowest CLI sample | Seconds | Maximum peak RSS sample | MiB |
+- [paired.json](paired.json): 558 CLI samples (31 configurations × six rounds × three variants), 108 code-index samples, all six mainnet CLI samples, diagnostics, manifests and executable identities.
+- [allocations.txt](allocations.txt): 558 separate fresh-process allocation samples, 108 code-index samples and both mainnet diagnostic MemStats records.
+- [parity.json](parity.json): 60 retain/alloc artifacts and 64 freshly rerun baseline/candidate metadata-boundary pairs (128 artifacts), with the boundary test source.
+
+All 558 CLI outputs match baseline bytes and full summaries and pass independent Reader verification. Retain/alloc checks cover workers 2/8, both codecs and both candidate code caches. Metadata boundaries cover 31, 32, 1 MiB and 1 MiB + 1 byte lengths across migrate/dump, workers 2/16, both codecs and caches. Source digests are unchanged.
+
+Each synthetic configuration uses all six order permutations, with a 64 MiB source cache and 64 file handles. Baseline uses command defaults (migrate memory, dump none); candidate caches are explicit. `none` in configuration names is compression. `1k-bytecode` has 1,024 distinct 65,536-byte codes; other code workloads use 10-byte codes. `32x1025-storage` crosses the partition threshold; `1m-storage` contains one million slots. `-alloc` is a no-op existing-account overlay and `-overlay` clears code and edits storage.
+
+Values below are medians of six samples. B/M/N denotes baseline/current-memory/current-none. Wall and CPU are milliseconds; peak RSS is MiB. Compare M for migrate and N for dump to isolate the code change; other comparisons also change code-cache policy.
+
+| Configuration | Wall ms B / M / N | Wall Δ M / N | CPU ms B / M / N | Peak RSS MiB B / M / N |
 | --- | --- | --- | --- | --- |
-| baseline | 1m-storage-w8-zstd pair 3 | 16.677 | 1m-storage-w8-zstd pair 2 | 344.88 |
-| current-memory | 1m-storage-w8-zstd pair 0 | 16.934 | 1m-storage-w8-zstd pair 5 | 341.25 |
-| current-none | 1m-storage-w8-zstd pair 1 | 16.645 | 1m-storage-w8-zstd pair 5 | 339.25 |
+| 1k-bytecode-w8-zstd | 268.63 / 268.33 / 392.08 | -0.11% / +45.96% | 476.68 / 470.03 / 589.82 | 323.70 / 324.96 / 198.36 |
+| 1k-bytecode-w8-none | 250.58 / 253.57 / 378.13 | +1.19% / +50.90% | 459.15 / 456.50 / 575.22 | 281.27 / 302.31 / 177.90 |
+| 10k-w2-zstd | 144.40 / 143.12 / 143.66 | -0.89% / -0.51% | 293.32 / 285.14 / 283.21 | 54.84 / 55.62 / 55.00 |
+| 10k-w8-zstd | 137.85 / 132.78 / 131.33 | -3.68% / -4.73% | 346.26 / 318.86 / 310.49 | 56.12 / 57.92 / 56.77 |
+| 10k-w8-none | 138.10 / 135.11 / 132.48 | -2.16% / -4.07% | 352.06 / 332.08 / 320.12 | 54.80 / 56.27 / 54.62 |
+| 100k-w8-zstd | 1416.07 / 1353.30 / 1356.27 | -4.43% / -4.22% | 3472.48 / 3135.14 / 3112.06 | 261.17 / 269.50 / 260.95 |
+| 10k-codes-w8-zstd | 174.68 / 165.81 / 187.26 | -5.08% / +7.20% | 515.46 / 502.78 / 531.69 | 74.34 / 76.28 / 77.83 |
+| 10k-codes-w8-none | 164.53 / 157.09 / 174.75 | -4.52% / +6.21% | 488.40 / 484.31 / 494.44 | 59.89 / 61.83 / 60.71 |
+| 100k-codes-w8-zstd | 1836.61 / 1806.66 / 2053.47 | -1.63% / +11.81% | 4987.29 / 5148.40 / 5297.33 | 302.01 / 301.29 / 301.13 |
+| 100k-codes-w8-none | 1795.85 / 1763.03 / 2004.01 | -1.83% / +11.59% | 4990.38 / 5138.98 / 5304.44 | 281.93 / 282.78 / 281.55 |
+| 10k-codes-w8-zstd-alloc | 178.59 / 173.55 / 190.43 | -2.83% / +6.63% | 500.92 / 500.19 / 530.02 | 75.85 / 77.83 / 77.87 |
+| 10k-codes-w8-none-alloc | 175.71 / 171.88 / 187.94 | -2.18% / +6.96% | 512.92 / 510.70 / 528.23 | 59.16 / 61.67 / 60.62 |
+| 100k-codes-w8-zstd-alloc | 1934.47 / 1913.12 / 2150.83 | -1.10% / +11.18% | 5175.34 / 5320.48 / 5466.73 | 301.84 / 302.74 / 301.16 |
+| 100k-codes-w8-none-alloc | 1873.12 / 1782.17 / 2117.67 | -4.86% / +13.06% | 5106.00 / 5008.81 / 5573.43 | 309.00 / 283.16 / 281.09 |
+| 32x1025-storage-w8-zstd | 159.21 / 115.60 / 115.68 | -27.40% / -27.34% | 583.51 / 454.71 / 442.92 | 37.44 / 36.66 / 36.55 |
+| 1m-storage-w8-zstd | 14385.42 / 12318.58 / 12248.14 | -14.37% / -14.86% | 22030.81 / 15500.61 / 15453.19 | 340.06 / 342.37 / 336.74 |
+| 1m-storage-w8-none | 14360.94 / 12198.97 / 12189.34 | -15.05% / -15.12% | 21961.81 / 15421.21 / 15376.64 | 325.71 / 319.55 / 315.80 |
+| 1m-storage-w8-zstd-overlay | 14538.38 / 12435.20 / 12327.48 | -14.47% / -15.21% | 22709.66 / 16156.11 / 16083.92 | 341.74 / 341.34 / 336.16 |
+| dump-1k-bytecode-w8-zstd | 388.73 / 267.20 / 389.29 | -31.26% / +0.14% | 589.45 / 468.95 / 580.35 | 196.80 / 323.82 / 196.67 |
+| dump-1k-bytecode-w8-none | 373.55 / 248.33 / 374.94 | -33.52% / +0.37% | 571.89 / 453.44 / 571.87 | 176.43 / 300.54 / 176.09 |
+| dump-10k-w2-zstd | 118.19 / 113.57 / 112.79 | -3.91% / -4.57% | 256.35 / 235.16 / 230.92 | 52.64 / 54.21 / 53.44 |
+| dump-10k-w8-zstd | 102.46 / 100.59 / 99.04 | -1.82% / -3.34% | 272.11 / 255.55 / 253.13 | 56.53 / 56.73 / 55.75 |
+| dump-10k-w8-none | 96.34 / 95.67 / 93.55 | -0.70% / -2.90% | 260.31 / 249.43 / 246.58 | 42.76 / 45.10 / 44.00 |
+| dump-100k-w8-zstd | 1027.12 / 1029.23 / 1020.71 | +0.21% / -0.62% | 3586.41 / 3779.50 / 3750.36 | 208.61 / 209.95 / 207.98 |
+| dump-10k-codes-w8-zstd | 147.49 / 124.23 / 140.57 | -15.77% / -4.69% | 455.73 / 397.65 / 407.42 | 67.39 / 70.53 / 69.13 |
+| dump-10k-codes-w8-none | 138.72 / 112.51 / 131.18 | -18.90% / -5.44% | 463.46 / 388.11 / 409.62 | 50.20 / 52.30 / 51.13 |
+| dump-100k-codes-w8-zstd | 1767.61 / 1536.05 / 1815.29 | -13.10% / +2.70% | 6060.02 / 6910.69 / 7172.33 | 260.97 / 264.12 / 261.28 |
+| dump-100k-codes-w8-none | 1685.66 / 1461.20 / 1718.36 | -13.32% / +1.94% | 5925.31 / 6819.22 / 7165.10 | 239.82 / 241.14 / 239.08 |
+| dump-32x1025-storage-w8-zstd | 122.77 / 85.07 / 86.08 | -30.70% / -29.88% | 525.98 / 410.07 / 414.52 | 50.00 / 51.28 / 49.59 |
+| dump-1m-storage-w8-zstd | 13145.49 / 11100.78 / 11140.09 | -15.55% / -15.26% | 20971.06 / 14296.57 / 14417.67 | 213.42 / 213.48 / 212.77 |
+| dump-1m-storage-w8-none | 13194.38 / 11153.64 / 11073.13 | -15.47% / -16.08% | 21051.29 / 14443.09 / 14337.92 | 191.98 / 194.11 / 191.84 |
 
-## Allocation fixture
+The optimization has workload tradeoffs. With unchanged default cache policies, dump with 100,000 distinct codes increased median wall by 2.70% (zstd) / 1.94% (uncompressed), and CPU by 18.36% / 20.92%. The uncompressed 1,024-large-code migration increased wall by 1.19% and peak RSS by 7.48%. These results are retained, not dismissed as outliers. The measured benefit targets mainnet migration and storage-heavy traversal; it is not a universal CPU, memory or throughput improvement. No hard RSS guarantee or default resource increase is introduced.
 
-Allocation samples use a separate fixed fixture (10,000 contract storage slots, workers 2, cache 16 MiB, zstd, benchtime 1x), repeated in each CLI phase. They do not represent that phase's account/code/codec dimensions. Cache policies and command match their labels. Every sample is preserved in allocations.txt. Values below are median ms/op / B/op / allocs/op.
+All slow samples remain in raw data. Maxima are reported separately:
 
-| Phase | Baseline | Current memory | Current none |
+| Variant | Slowest configuration / pair | Seconds | Maximum peak RSS MiB |
 | --- | --- | --- | --- |
-| 1k-bytecode-w8-zstd | 41.347 / 44,189,904 / 245,706.0 | 41.439 / 44,186,320 / 245,705.0 | 40.903 / 43,139,708 / 245,761.0 |
-| 1k-bytecode-w8-none | 41.350 / 44,188,680 / 245,682.0 | 40.946 / 44,182,764 / 245,696.5 | 41.389 / 43,137,096 / 245,718.0 |
-| 10k-w2-zstd | 40.914 / 44,191,064 / 245,728.5 | 40.880 / 44,186,748 / 245,729.5 | 40.880 / 43,138,468 / 245,756.0 |
-| 10k-w8-zstd | 40.905 / 44,185,648 / 245,710.0 | 40.931 / 44,185,260 / 245,683.0 | 40.942 / 43,137,628 / 245,711.5 |
-| 10k-w8-none | 40.903 / 44,185,028 / 245,704.5 | 40.872 / 44,187,488 / 245,718.0 | 41.020 / 43,142,712 / 245,718.0 |
-| 100k-w8-zstd | 41.451 / 44,188,280 / 245,720.5 | 41.867 / 44,191,664 / 245,687.0 | 40.966 / 43,138,880 / 245,739.5 |
-| 10k-codes-w8-zstd | 41.426 / 44,191,956 / 245,730.5 | 41.959 / 44,184,260 / 245,725.5 | 41.449 / 43,137,896 / 245,734.5 |
-| 10k-codes-w8-none | 42.844 / 44,189,388 / 245,705.0 | 42.907 / 44,190,240 / 245,687.0 | 42.399 / 43,137,720 / 245,714.0 |
-| 100k-codes-w8-zstd | 40.898 / 44,188,616 / 245,678.5 | 41.411 / 44,186,676 / 245,706.0 | 41.865 / 43,132,408 / 245,707.5 |
-| 100k-codes-w8-none | 42.368 / 44,188,124 / 245,686.0 | 42.351 / 44,185,864 / 245,706.5 | 41.793 / 43,132,452 / 245,691.0 |
-| 10k-codes-w8-zstd-alloc | 44.870 / 44,187,452 / 245,684.5 | 45.291 / 44,191,464 / 245,699.0 | 45.289 / 43,143,372 / 245,717.5 |
-| 10k-codes-w8-none-alloc | 46.404 / 44,191,972 / 245,694.0 | 45.434 / 44,192,792 / 245,707.5 | 45.758 / 43,144,572 / 245,717.5 |
-| 100k-codes-w8-zstd-alloc | 42.810 / 44,191,388 / 245,718.0 | 43.324 / 44,192,528 / 245,724.5 | 43.836 / 43,132,084 / 245,702.0 |
-| 100k-codes-w8-none-alloc | 42.888 / 44,191,524 / 245,718.5 | 41.875 / 44,186,808 / 245,708.5 | 43.319 / 43,136,752 / 245,690.5 |
-| 32x1025-storage-w8-zstd | 44.864 / 44,187,556 / 245,671.5 | 43.314 / 44,192,816 / 245,745.0 | 45.804 / 43,138,944 / 245,718.5 |
-| 1m-storage-w8-zstd | 41.441 / 44,188,364 / 245,706.5 | 40.822 / 44,192,796 / 245,725.5 | 40.990 / 43,138,624 / 245,749.5 |
-| 1m-storage-w8-none | 40.940 / 44,186,764 / 245,719.0 | 42.904 / 44,186,628 / 245,722.0 | 41.131 / 43,140,660 / 245,724.0 |
-| 1m-storage-w8-zstd-overlay | 41.867 / 44,184,204 / 245,698.5 | 41.873 / 44,187,560 / 245,714.0 | 41.870 / 43,139,708 / 245,712.5 |
-| dump-1k-bytecode-w8-zstd | 28.848 / 38,779,832 / 204,479.5 | 28.960 / 39,841,576 / 204,515.5 | 28.870 / 38,781,628 / 204,478.0 |
-| dump-1k-bytecode-w8-none | 29.901 / 38,782,640 / 204,470.5 | 29.915 / 39,842,256 / 204,526.0 | 30.389 / 38,784,152 / 204,495.0 |
-| dump-10k-w2-zstd | 28.970 / 38,783,224 / 204,481.5 | 28.929 / 39,833,724 / 204,495.0 | 28.932 / 38,777,984 / 204,466.0 |
-| dump-10k-w8-zstd | 28.947 / 38,779,452 / 204,477.5 | 28.942 / 39,840,248 / 204,513.0 | 28.858 / 38,785,032 / 204,492.5 |
-| dump-10k-w8-none | 29.874 / 38,781,608 / 204,476.5 | 28.938 / 39,844,708 / 204,516.5 | 29.872 / 38,785,488 / 204,492.0 |
-| dump-100k-w8-zstd | 28.935 / 38,782,032 / 204,474.0 | 28.981 / 39,837,596 / 204,507.0 | 29.000 / 38,783,936 / 204,477.5 |
-| dump-10k-codes-w8-zstd | 28.930 / 38,783,572 / 204,469.5 | 29.910 / 39,833,936 / 204,492.0 | 29.402 / 38,786,100 / 204,496.5 |
-| dump-10k-codes-w8-none | 28.941 / 38,783,604 / 204,476.0 | 30.398 / 39,844,800 / 204,504.0 | 29.405 / 38,782,372 / 204,481.5 |
-| dump-100k-codes-w8-zstd | 28.956 / 38,781,088 / 204,471.0 | 28.915 / 39,838,112 / 204,516.0 | 28.883 / 38,784,280 / 204,493.0 |
-| dump-100k-codes-w8-none | 29.328 / 38,783,152 / 204,458.0 | 29.930 / 39,841,180 / 204,503.0 | 28.918 / 38,784,092 / 204,456.5 |
-| dump-32x1025-storage-w8-zstd | 28.898 / 38,782,844 / 204,491.0 | 29.447 / 39,837,324 / 204,504.5 | 29.809 / 38,780,232 / 204,449.5 |
-| dump-1m-storage-w8-zstd | 28.992 / 38,783,532 / 204,487.0 | 28.946 / 39,840,036 / 204,508.0 | 28.949 / 38,786,524 / 204,495.5 |
-| dump-1m-storage-w8-none | 28.914 / 38,782,780 / 204,464.0 | 28.967 / 39,833,984 / 204,509.5 | 28.913 / 38,784,164 / 204,490.0 |
+| baseline | 1m-storage-w8-zstd-overlay / 1 | 14.584 | 346.30 |
+| current-memory | 1m-storage-w8-zstd-overlay / 0 | 13.078 | 353.56 |
+| current-none | 1m-storage-w8-zstd-overlay / 2 | 12.499 | 338.66 |
 
-## Code-index microbenchmarks
+## Allocation and code-index controls
 
-Both sides use the unchanged ordered code index. Nine workloads run six alternating fresh-process baseline/current pairs; raw records include ns/op, B/op, allocs/op and process wall/CPU/RSS. Medians follow.
+Allocation measurements use a separate fixed fixture (10,000 contract storage slots, workers 2, 16 MiB cache, zstd, benchtime 1x) in each CLI phase. They do not represent that phase’s CLI account/code/storage/codec dimensions. Each raw record is preserved with phase, pair and implementation. The code index is unchanged; nine workloads use six alternating baseline/current fresh-process pairs. Medians follow as ms/op / B/op / allocs/op.
 
-| Distinct hashes / mode | Baseline ms / B / allocs | Current ms / B / allocs |
+| Allocation phase | Baseline ms / B / allocs | Current memory ms / B / allocs | Current none ms / B / allocs |
+| --- | --- | --- | --- |
+| 1k-bytecode-w8-zstd | 40.966 / 44,185,308 / 245,724.5 | 39.879 / 44,144,928 / 244,658.5 | 39.919 / 43,101,884 / 244,718.0 |
+| 1k-bytecode-w8-none | 41.462 / 44,186,148 / 245,716.0 | 40.415 / 44,146,992 / 244,662.0 | 40.382 / 43,103,304 / 244,728.0 |
+| 10k-w2-zstd | 40.855 / 44,194,356 / 245,745.0 | 39.890 / 44,149,060 / 244,684.0 | 41.331 / 43,107,052 / 244,754.5 |
+| 10k-w8-zstd | 41.966 / 44,194,492 / 245,716.0 | 39.855 / 44,152,340 / 244,720.0 | 40.468 / 43,105,964 / 244,728.5 |
+| 10k-w8-none | 40.926 / 44,190,980 / 245,705.5 | 39.956 / 44,149,504 / 244,678.5 | 39.967 / 43,103,612 / 244,741.5 |
+| 100k-w8-zstd | 41.864 / 44,187,988 / 245,705.5 | 40.913 / 44,145,008 / 244,690.0 | 40.907 / 43,097,252 / 244,705.0 |
+| 10k-codes-w8-zstd | 40.957 / 44,187,736 / 245,743.5 | 40.856 / 44,147,312 / 244,701.5 | 40.776 / 43,097,060 / 244,684.0 |
+| 10k-codes-w8-none | 41.930 / 44,187,552 / 245,700.5 | 40.411 / 44,149,068 / 244,655.5 | 41.456 / 43,099,568 / 244,728.5 |
+| 100k-codes-w8-zstd | 39.955 / 44,189,276 / 245,724.0 | 40.422 / 44,150,068 / 244,690.5 | 39.905 / 43,099,276 / 244,707.0 |
+| 100k-codes-w8-none | 40.879 / 44,184,924 / 245,705.0 | 39.913 / 44,147,660 / 244,663.0 | 39.909 / 43,102,824 / 244,679.5 |
+| 10k-codes-w8-zstd-alloc | 41.842 / 44,189,348 / 245,726.0 | 40.882 / 44,154,396 / 244,694.5 | 39.872 / 43,096,700 / 244,677.5 |
+| 10k-codes-w8-none-alloc | 40.870 / 44,184,820 / 245,699.5 | 39.921 / 44,149,200 / 244,688.0 | 40.435 / 43,103,388 / 244,692.5 |
+| 100k-codes-w8-zstd-alloc | 41.869 / 44,185,440 / 245,689.0 | 40.883 / 44,146,244 / 244,644.5 | 40.392 / 43,103,620 / 244,742.0 |
+| 100k-codes-w8-none-alloc | 41.859 / 44,187,012 / 245,722.5 | 40.802 / 44,149,340 / 244,678.0 | 40.425 / 43,104,056 / 244,743.0 |
+| 32x1025-storage-w8-zstd | 41.881 / 44,192,004 / 245,717.5 | 40.923 / 44,151,676 / 244,701.5 | 40.901 / 43,110,248 / 244,812.0 |
+| 1m-storage-w8-zstd | 40.882 / 44,193,216 / 245,774.5 | 39.928 / 44,156,088 / 244,720.5 | 39.937 / 43,106,240 / 244,714.5 |
+| 1m-storage-w8-none | 41.922 / 44,185,740 / 245,721.0 | 41.338 / 44,152,032 / 244,713.5 | 41.425 / 43,102,828 / 244,745.0 |
+| 1m-storage-w8-zstd-overlay | 40.911 / 44,186,304 / 245,722.0 | 39.896 / 44,150,544 / 244,688.5 | 39.925 / 43,098,520 / 244,751.0 |
+| dump-1k-bytecode-w8-zstd | 28.959 / 38,780,792 / 204,462.0 | 28.834 / 39,835,216 / 204,478.0 | 28.868 / 38,782,452 / 204,469.5 |
+| dump-1k-bytecode-w8-none | 30.342 / 38,785,376 / 204,468.0 | 28.925 / 39,834,248 / 204,473.0 | 28.905 / 38,781,600 / 204,459.0 |
+| dump-10k-w2-zstd | 31.388 / 38,786,836 / 204,467.0 | 29.367 / 39,839,660 / 204,471.0 | 29.428 / 38,781,744 / 204,468.0 |
+| dump-10k-w8-zstd | 30.926 / 38,784,840 / 204,481.5 | 29.905 / 39,834,696 / 204,468.5 | 28.896 / 38,786,812 / 204,475.5 |
+| dump-10k-w8-none | 30.900 / 38,781,932 / 204,476.5 | 29.927 / 39,840,288 / 204,492.0 | 28.913 / 38,790,260 / 204,482.5 |
+| dump-100k-w8-zstd | 28.908 / 38,785,400 / 204,485.0 | 28.868 / 39,836,148 / 204,476.5 | 28.913 / 38,782,224 / 204,456.0 |
+| dump-10k-codes-w8-zstd | 30.797 / 38,785,748 / 204,483.5 | 29.398 / 39,838,372 / 204,478.5 | 30.353 / 38,781,864 / 204,468.5 |
+| dump-10k-codes-w8-none | 30.887 / 38,786,400 / 204,457.5 | 29.903 / 39,839,900 / 204,486.5 | 28.934 / 38,781,284 / 204,458.0 |
+| dump-100k-codes-w8-zstd | 29.875 / 38,785,772 / 204,491.5 | 29.437 / 39,838,140 / 204,489.5 | 29.981 / 38,781,200 / 204,471.5 |
+| dump-100k-codes-w8-none | 30.850 / 38,786,708 / 204,483.5 | 28.909 / 39,838,800 / 204,484.5 | 28.928 / 38,777,208 / 204,441.0 |
+| dump-32x1025-storage-w8-zstd | 30.890 / 38,781,580 / 204,478.5 | 29.402 / 39,842,528 / 204,498.5 | 28.893 / 38,785,696 / 204,463.5 |
+| dump-1m-storage-w8-zstd | 28.889 / 38,789,552 / 204,492.0 | 29.065 / 39,836,616 / 204,476.5 | 28.363 / 38,784,580 / 204,482.0 |
+| dump-1m-storage-w8-none | 31.901 / 38,789,392 / 204,488.0 | 30.392 / 39,834,796 / 204,481.0 | 31.340 / 38,781,872 / 204,449.5 |
+
+Code-index medians:
+
+| Distinct hashes / mode | Baseline | Current |
 | --- | --- | --- |
-| 10,000 / shared | 0.642 / 1,978,792 / 99.0 | 0.695 / 1,978,792 / 99.0 |
-| 10,000 / overlap | 0.664 / 1,978,792 / 99.0 | 0.664 / 1,978,792 / 99.0 |
-| 10,000 / repeated | 1.930 / 1,978,792 / 99.0 | 1.965 / 1,978,792 / 99.0 |
-| 100,000 / shared | 6.016 / 16,609,192 / 641.0 | 5.935 / 16,609,192 / 641.0 |
-| 100,000 / overlap | 6.473 / 16,609,192 / 641.0 | 6.437 / 16,609,192 / 641.0 |
-| 100,000 / repeated | 21.500 / 16,609,192 / 641.0 | 21.593 / 16,609,192 / 641.0 |
-| 1,000,000 / shared | 91.633 / 240,976,296 / 9,184.5 | 89.118 / 241,074,664 / 9,187.0 |
-| 1,000,000 / overlap | 98.790 / 241,173,032 / 9,191.0 | 98.712 / 241,077,620 / 9,192.5 |
-| 1,000,000 / repeated | 565.084 / 241,124,016 / 9,190.5 | 550.187 / 241,173,144 / 9,192.0 |
+| 10,000 / shared | 0.649 / 1,978,792 / 99.0 | 0.639 / 1,978,792 / 99.0 |
+| 10,000 / overlap | 0.693 / 1,978,792 / 99.0 | 0.696 / 1,978,792 / 99.0 |
+| 10,000 / repeated | 2.049 / 1,978,792 / 99.0 | 2.048 / 1,978,792 / 99.0 |
+| 100,000 / shared | 6.238 / 16,609,192 / 641.0 | 6.177 / 16,609,192 / 641.0 |
+| 100,000 / overlap | 6.680 / 16,609,192 / 641.0 | 6.734 / 16,609,192 / 641.0 |
+| 100,000 / repeated | 22.528 / 16,609,192 / 641.0 | 22.546 / 16,609,192 / 641.0 |
+| 1,000,000 / shared | 100.931 / 241,175,820 / 9,194.5 | 98.724 / 241,178,720 / 9,195.0 |
+| 1,000,000 / overlap | 106.674 / 241,126,748 / 9,193.5 | 106.630 / 241,178,608 / 9,197.0 |
+| 1,000,000 / repeated | 601.029 / 241,123,848 / 9,190.5 | 567.897 / 240,976,352 / 9,184.5 |
+
+## Local validation
+
+`make ci`, `make test-race`, six Python benchmark tests and `git diff --check` passed. Added tests cover partial/exact/multiple iterator batches, distinct-value ownership and ordering, full-queue permit release, cancellation and consumer/visitor errors. Restoration tests cover source-root roundtrip, original hashed storage keys/code/header, existing destination rejection, header mismatch, truncated input cleanup and cancellation. Existing output admission, bounded queues and acknowledged-release regressions remain. The optional real-fixture legacy traversal and metadata-boundary checks ran separately outside timing.
 
 ## Reproduction
 
+Use fresh destination directories and a stopped restored DB. Original fixtures are private operator inputs; their hashes are recorded in paired.json. Reconstruct the clean baseline from the recorded commit:
 
 ```sh
 baseline=$(mktemp -d)
-# Extract measured baseline identity and reconstruct its sources.
-python3 - "$baseline" <<'PYBASE'
-import json,subprocess,sys,io,tarfile
-from pathlib import Path
-identity=json.loads(Path('docs/benchmarks/paired.json').read_text())['baseline_identity']
-base=Path(sys.argv[1]).resolve()
-archive=subprocess.check_output(['git','archive',identity['head']])
-tarfile.open(fileobj=io.BytesIO(archive)).extractall(base,filter='data')
-subprocess.run(['git','apply','--binary','-'],cwd=base,input=identity['patch'].encode(),check=True)
-(base/'baseline-identity.json').write_text(json.dumps(identity))
-PYBASE
+git archive c61d52a7ece259526edff5f0ad5a254b0619805c | tar -x -C "$baseline"
 (cd "$baseline" && GOFLAGS=-buildvcs=false go build -trimpath -o l2state ./cmd/l2state)
 (cd "$baseline" && GOFLAGS=-buildvcs=false go build -trimpath -o verifyfile ./testdata/verifyfile)
 (cd "$baseline" && GOFLAGS=-buildvcs=false go test -c -o migration.test ./internal/migration)
+GOFLAGS=-buildvcs=false go build -trimpath -o /tmp/current-l2state ./cmd/l2state
+go run ./testdata/restorestate --dump fixtures/dump.zstd \
+  --preimages fixtures/preimages.rlp.gz --genesis fixtures/genesis-header.json \
+  --target fixtures/target-block-header.json --out /tmp/restored-chaindata
+(cd testdata/legacyintegration && L2STATE_RESTORED_SOURCE=/tmp/restored-chaindata \
+  L2STATE_RESTORED_CACHE_MB=8192 L2STATE_RESTORED_HANDLES=4096 \
+  go test -count=1 -v -run '^TestRestoredLegacyState$')
+PYTHONDONTWRITEBYTECODE=1 python3 scripts/benchmark_mainnet.py \
+  --baseline "$baseline/l2state" --current /tmp/current-l2state \
+  --verifier "$baseline/verifyfile" --source /tmp/restored-chaindata \
+  --fixtures fixtures --runtime internal/migration/testdata/wrapped.hex \
+  --pairs 2 --workers 8 --cache-mb 8192 --handles 4096 \
+  --control-cache-mb 512 --control-handles 2048 --out /tmp/mainnet-pairs
 PYTHONDONTWRITEBYTECODE=1 python3 scripts/benchmark_suite.py \
-  --baseline-binary "$baseline/l2state" \
-  --baseline-verifier "$baseline/verifyfile" \
+  --baseline-binary "$baseline/l2state" --baseline-verifier "$baseline/verifyfile" \
   --baseline-test-binary "$baseline/migration.test" \
-  --baseline-identity "$baseline/baseline-identity.json" \
-  --baseline-ref btree-lock-task-start-76672b21304c \
-  --compare bytes --baseline-index ordered --pairs 6 --out /tmp/l2state-trylock-suite
+  --baseline-ref c61d52a7ece259526edff5f0ad5a254b0619805c \
+  --compare bytes --baseline-index ordered --pairs 6 --out /tmp/synthetic-suite
 ```
 
-Use a fresh output directory. Individual configurations use scripts/benchmark.py with the same baseline binaries, `--baseline-events --compare bytes --code-cache both` and dimensions from paired.json. Retain/alloc parity uses scripts/benchmark_parity.py with matching CLIs/verifiers.
+For diagnostic profiles, copy only the current `testdata/dumpprofile/main.go` helper into the baseline checkout (leave baseline production sources unchanged) and build the helper separately in both checkouts. Run with `--command migrate --source <DB> --out <new.state> --profiles <new-dir> --mode all --ovm-events fixtures/ovm-events.json --audit fixtures/ovm-audit-report.json --runtime internal/migration/testdata/wrapped.hex --workers 8 --cache-mb 512 --handles 2048 --allocation-sample-bytes 524288 --block-rate-ns 1000000 --mutex-fraction 64`. Verify artifacts separately with `testdata/verifyfile`; use `go tool pprof -top` for each profile and the matching checkout as source path.
 
-For metadata boundaries, extract `metadata_boundary.test_source` from parity.json into a temporary Go file. In each checkout create a Go overlay using canonical absolute paths (resolve symlinks), mapping `internal/migration/metadata_review_test.go` to that file, then run `go test -count=1 -overlay <overlay.json> ./internal/migration -run ^TestMetadataReviewBoundary$ -v`. Compare all 64 `BOUNDARY` JSON records by case (artifact hash and complete summary). The test also checks source digests and independently verifies every output.
+For metadata boundaries, extract `metadata_boundary.test_source` from parity.json into a temporary file, map each checkout’s absolute `internal/migration/metadata_review_test.go` path to it using a Go overlay, and run `go test -count=1 -overlay <overlay.json> ./internal/migration -run ^TestMetadataReviewBoundary$ -v`. Compare all 64 `BOUNDARY` JSON rows. The test also checks source digests and independently reads each artifact.
 
-Replace this README and all three raw files together after a complete campaign. This directory retains only the latest suite; no slow sample or benchmark/test program was removed.
+This README and the three raw files replace the preceding suite together. Only this latest complete campaign is retained here; no slow sample or benchmark/test program was removed.
