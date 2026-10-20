@@ -284,11 +284,11 @@ func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
 	if err := ctx.Err(); err != nil {
 		return err
 	}
-	for key, v := range a {
-		s.allowances[key] = v
+	for _, v := range a {
+		s.allowances[AllowanceKey(v.Owner, v.Spender)] = v
 		s.doc.Allowances = append(s.doc.Allowances, v)
 	}
-	for address := range m {
+	for _, address := range m {
 		s.members[address] = struct{}{}
 		s.doc.Members = append(s.doc.Members, address)
 	}
@@ -298,9 +298,14 @@ func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
 	s.log.Info("Synchronized OVM events", "height", to, "allowances", len(s.allowances), "members", len(s.members))
 	return nil
 }
-func (s *synchronizer) validateLogs(logs []types.Log, headers map[uint64]common.Hash) (map[common.Hash]Allowance, map[common.Address]struct{}, error) {
-	a := make(map[common.Hash]Allowance)
-	m := make(map[common.Address]struct{})
+
+// validateLogs stages unique records in first-occurrence order. Maps only
+// deduplicate; no checkpoint state changes until the entire batch is accepted.
+func (s *synchronizer) validateLogs(logs []types.Log, headers map[uint64]common.Hash) ([]Allowance, []common.Address, error) {
+	var a []Allowance
+	var m []common.Address
+	allowances := make(map[common.Hash]Allowance)
+	members := make(map[common.Address]struct{})
 	slices.SortFunc(logs, func(a, b types.Log) int {
 		if a.BlockNumber < b.BlockNumber {
 			return -1
@@ -325,18 +330,22 @@ func (s *synchronizer) validateLogs(logs []types.Log, headers map[uint64]common.
 		}
 		from, to := common.BytesToAddress(l.Topics[1][12:]), common.BytesToAddress(l.Topics[2][12:])
 		if l.Topics[0] == ApprovalTopic {
-			if err := s.addAllowance(a, from, to); err != nil {
+			added, err := s.addAllowance(allowances, from, to)
+			if err != nil {
 				return nil, nil, err
 			}
-
+			if added {
+				a = append(a, Allowance{from, to})
+			}
 		} else if common.BytesToHash(l.Data) != (common.Hash{}) {
 			if _, ok := s.members[from]; ok {
 				continue
 			}
-			if _, ok := m[from]; ok {
+			if _, ok := members[from]; ok {
 				continue
 			}
-			m[from] = struct{}{}
+			members[from] = struct{}{}
+			m = append(m, from)
 		}
 	}
 	return a, m, nil
@@ -367,7 +376,6 @@ func (s *synchronizer) flush() error {
 	if !s.dirty {
 		return nil
 	}
-	s.doc.Sort()
 	if err := s.save(s.o.Output, s.doc); err != nil {
 		return fmt.Errorf("save checkpoint: %w", err)
 	}
@@ -377,18 +385,21 @@ func (s *synchronizer) flush() error {
 	return nil
 }
 
-func (s *synchronizer) addAllowance(batch map[common.Hash]Allowance, from, to common.Address) error {
+func (s *synchronizer) addAllowance(batch map[common.Hash]Allowance, from, to common.Address) (bool, error) {
 	v := Allowance{from, to}
 	key := AllowanceKey(from, to)
 	if old, ok := s.allowances[key]; ok {
 		if old != v {
-			return errors.New("conflicting allowance")
+			return false, errors.New("conflicting allowance")
 		}
-		return nil
+		return false, nil
 	}
-	if old, ok := batch[key]; ok && old != v {
-		return errors.New("conflicting batch allowance")
+	if old, ok := batch[key]; ok {
+		if old != v {
+			return false, errors.New("conflicting batch allowance")
+		}
+		return false, nil
 	}
 	batch[key] = v
-	return nil
+	return true, nil
 }

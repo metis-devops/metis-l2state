@@ -24,17 +24,27 @@ IndexVersion, Genesis, IndexHeadNumber, IndexHeadHash, IndexDigest, AllowanceCou
 MemberCount, Inputs. Inputs is an ordered list of `[Name, SHA256]` entries, sorted
 by name; migration uses `alloc`, `audit`, `ovm-events`, `retain`, `runtime` when present.
 `ovm-events` is the SHA-256 of the exact initial RPC checkpoint JSON bytes.
-Index digests hash length-framed key/value pairs in metadata/head/ready,
-allowance-key order, then member-address order. Each length is uint64 BE. For
+Index digests hash length-framed key/value pairs in metadata/head/ready order,
+then allowances in checkpoint array order, then members in checkpoint array
+order. Each length is uint64 BE. For
 RPC event inputs these records are reconstructed from checkpoint identity,
-fixed protocol constants and sorted relationships. Synthetic head/ready
+fixed protocol constants and the saved relationship sequences. Synthetic head/ready
 positions both equal checkpoint progress. Allowance trie keys are derived from
 owner/spender at mapping slot 1.
+
+The synchronizer preserves first occurrence in `(blockNumber, logIndex)` order
+for each array, using maps for deduplication and slices for persistence. Readers
+reject duplicate derived allowance keys and duplicate member addresses with maps,
+without sorting or requiring key/address order. Event positions are not stored,
+so readers cannot independently verify first-occurrence order. IndexDigest binds
+the supplied sequences: permuting either array changes it, while changing JSON
+formatting does not. The digest is not an order-independent set identity. This
+change applies directly to v1 and IndexVersion=1, without a compatibility mode.
 
 Each member record has key `ovm-transfer-v1/member/` followed by its 20 address
 bytes, and an empty value (a zero uint64 value-length field, with no value bytes).
 No member block number or block hash enters the digest. Removing per-member
-positions intentionally changes the normalized index digest, while the format
+positions intentionally changes the index digest, while the format
 and IndexVersion remain 1. Checkpoint JSON changes also change the raw input
 SHA-256. This encoding does not assert node index readiness or prove historical
 completeness.
@@ -148,7 +158,11 @@ the current encoding; it does not establish compatibility with earlier revisions
 The checkpoint schema simplification does not change statefile encoding or these
 binary fixtures. The current event JSON fixture is
 `internal/ovmevents/testdata/v1.json`; its test pins exact encoder bytes and the
-independently calculated normalized index digest for the address-set schema.
+independently calculated index digest for the address-set schema. Its single
+allowance and member keep the same bytes and digest under first-occurrence
+ordering. Sequence round-trip and nonadjacent-duplicate tests cover multiple
+records, and sync tests compare checkpoint bytes across batch sizes, RPC response
+orders, flush intervals and resumptions.
 The member values in that digest are empty; this is an intentional v1 digest
 change. The fixture must retain the exact streaming encoder bytes, including
 whitespace, rather than being reformatted as pretty JSON.

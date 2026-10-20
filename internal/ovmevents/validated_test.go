@@ -101,7 +101,7 @@ func frozenFixture(t *testing.T, d *Document) *Validated {
 	return v
 }
 
-// IndexDigest preserves the v1 normalized key/value digest, without reading DB indexes.
+// IndexDigest hashes v1 key/value records in checkpoint order, without DB indexes.
 func (d *Document) IndexDigest() common.Hash {
 	h, _ := d.indexDigest(context.Background())
 	return h

@@ -215,10 +215,18 @@ is stored. The RPC source, OVM_ETH contract, Transfer/Approval topics and allowa
 fields. The secure storage trie key is derived from each owner/spender pair;
 it is never supplied by the checkpoint.
 
-Allowances are sorted and unique by that derived key; members are sorted and
-unique by address. Genesis and progress bind the entire set to one canonical
-prefix. Synchronization still validates each log against its canonical block
-header before adding its sender to the set, including repeated senders.
+Allowances are unique by that derived key; members are unique by address.
+The synchronizer orders logs by `(blockNumber, logIndex)` and retains each
+relationship or sender at its first qualifying occurrence. Maps deduplicate
+within and across batches; slices preserve this order when saving and resuming.
+Batch size, flush timing and RPC response order do not affect the final sequences
+when synchronizing the same complete canonical prefix from genesis. A batch is
+committed only after all logs and its canonical boundary pass validation.
+Readers use maps to reject duplicates and preserve the supplied sequences;
+without per-record event positions they cannot verify first-occurrence order.
+Genesis and progress bind the entire set to one canonical prefix.
+Synchronization still validates each log against its canonical block header
+before adding its sender to the set, including repeated senders.
 Readers reject duplicate, missing, unknown or null fields, including the removed
 `source`, `contract`, `allowanceSlot`, `transferTopic`, `approvalTopic` and
 allowance `storageKeyHash` fields. Each allowance must contain exactly two
@@ -339,7 +347,10 @@ consumers can use `statefile.Verify` for that check.
 
 For migration, input data and SHA-256 digests describe the bytes parsed initially. Inputs are not
 reopened before publication. The `ovm-events` input digest covers the original JSON
-bytes, and IndexDigest covers its normalized v1 relationships and identity.
+bytes, and IndexDigest covers its v1 identity followed by allowances and members
+in their saved sequence order. JSON formatting does not affect IndexDigest;
+reordering either sequence does, even when the sets are identical. No storage-key
+or address sorting is performed. This rule applies directly to v1.
 Replacing a JSON path later does not alter the captured input. A stopped source
 or consistent snapshot remains required.
 

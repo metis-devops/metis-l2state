@@ -2,7 +2,6 @@
 package ovmevents
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
 	"encoding/binary"
@@ -14,8 +13,6 @@ import (
 	"io"
 	"math/big"
 	"os"
-	"slices"
-	"sort"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
@@ -48,12 +45,13 @@ func (a Allowance) MarshalJSON() ([]byte, error) {
 
 // Document is a complete prefix, including empty blocks, starting at genesis.
 type Document struct {
-	Version    uint64      `json:"version"`
-	ChainID    string      `json:"chainId"`
-	Genesis    common.Hash `json:"genesis"`
-	Progress   Position    `json:"progress"`
+	Version  uint64      `json:"version"`
+	ChainID  string      `json:"chainId"`
+	Genesis  common.Hash `json:"genesis"`
+	Progress Position    `json:"progress"`
+	// Allowances and Members retain first occurrence in canonical event order.
 	Allowances []Allowance `json:"allowances"`
-	// Members contains sorted unique nonzero Transfer senders in the prefix.
+	// Members contains unique senders of nonzero Transfers in the prefix.
 	Members []common.Address `json:"members"`
 }
 
@@ -70,31 +68,7 @@ func AllowanceKey(owner, spender common.Address) common.Hash {
 	return crypto.Keccak256Hash(crypto.Keccak256(common.LeftPadBytes(spender[:], 32), inner))
 }
 
-// allowanceOrder caches derived keys only while sorting, avoiding hashing inside
-// comparisons. Keys are never supplied by a checkpoint or retained on a record.
-type allowanceOrder struct {
-	values []Allowance
-	keys   []common.Hash
-}
-
-func (o allowanceOrder) Len() int           { return len(o.values) }
-func (o allowanceOrder) Less(i, j int) bool { return bytes.Compare(o.keys[i][:], o.keys[j][:]) < 0 }
-func (o allowanceOrder) Swap(i, j int) {
-	o.values[i], o.values[j] = o.values[j], o.values[i]
-	o.keys[i], o.keys[j] = o.keys[j], o.keys[i]
-}
-
-// Sort makes persistence independent of event response ordering.
-func (d *Document) Sort() {
-	keys := make([]common.Hash, len(d.Allowances))
-	for i, a := range d.Allowances {
-		keys[i] = AllowanceKey(a.Owner, a.Spender)
-	}
-	sort.Sort(allowanceOrder{d.Allowances, keys})
-	slices.SortFunc(d.Members, func(a, b common.Address) int { return bytes.Compare(a[:], b[:]) })
-}
-
-// Validate rejects inconsistent, duplicate or unordered index evidence.
+// Validate rejects inconsistent or duplicate index evidence without reordering it.
 func (d *Document) Validate() error { return d.ValidateContext(context.Background()) }
 
 // ValidateContext checks mutable checkpoint evidence with cancellable scans.
@@ -112,24 +86,26 @@ func (d *Document) ValidateContext(ctx context.Context) error {
 	if d.Progress.BlockHash == (common.Hash{}) || (d.Progress.BlockNumber == 0 && d.Progress.BlockHash != d.Genesis) {
 		return errors.New("invalid OVM event progress")
 	}
-	var previous common.Hash
-	for i, a := range d.Allowances {
+	allowances := make(map[common.Hash]struct{}, len(d.Allowances))
+	for _, a := range d.Allowances {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
 		key := AllowanceKey(a.Owner, a.Spender)
-		if i > 0 && bytes.Compare(previous[:], key[:]) >= 0 {
-			return errors.New("duplicate or unordered allowance")
+		if _, exists := allowances[key]; exists {
+			return errors.New("duplicate or conflicting allowance key")
 		}
-		previous = key
+		allowances[key] = struct{}{}
 	}
-	for i, address := range d.Members {
+	members := make(map[common.Address]struct{}, len(d.Members))
+	for _, address := range d.Members {
 		if err := ctx.Err(); err != nil {
 			return err
 		}
-		if i > 0 && bytes.Compare(d.Members[i-1][:], address[:]) >= 0 {
-			return errors.New("duplicate or unordered member")
+		if _, exists := members[address]; exists {
+			return errors.New("duplicate member")
 		}
+		members[address] = struct{}{}
 	}
 	return nil
 }
@@ -163,7 +139,7 @@ func ReadFile(ctx context.Context, path string) (d *Document, digest common.Hash
 	return d, common.BytesToHash(h.Sum(nil)), nil
 }
 
-// Encode writes one deterministic JSON document without buffering the full file.
+// Encode preserves record order without buffering the full file.
 func Encode(w io.Writer, d *Document) error {
 	if err := d.Validate(); err != nil {
 		return err
@@ -234,6 +210,8 @@ func hashRecord(h hash.Hash, key, value []byte) {
 	_, _ = h.Write(value)
 }
 
+// indexDigest binds identity and both record sequences in checkpoint order.
+// JSON formatting is excluded; reordering either sequence changes the digest.
 func (d *Document) indexDigest(ctx context.Context) (common.Hash, error) {
 	if err := ctx.Err(); err != nil {
 		return common.Hash{}, err

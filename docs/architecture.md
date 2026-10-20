@@ -211,7 +211,8 @@ the reader cannot independently replay OVM policy from provenance alone.
 
 Inputs and their digests are captured during initial parsing, with no final
 path-based reread. JSON is decoded with bounded tokens and hashed once; its
-normalized relationships use the existing v1 IndexDigest encoding. Preparation
+relationship sequences use the v1 length-framed IndexDigest encoding in saved
+array order. The digest excludes JSON formatting but binds record order. Preparation
 binds event evidence to source genesis and canonical head/header without reading
 retired node index markers. After successful capture, migration does not reread
 source account/storage state. Memory mode also avoids source code rereads;
@@ -222,13 +223,17 @@ database or consistent-snapshot requirement.
 `internal/ovmevents` owns strict checkpoint parsing, event selection, RPC polling
 and atomic checkpoint replacement. Checkpoints contain chain identity, progress
 and relationships; protocol constants stay in code and allowance trie keys are
-derived from owner/spender. Members are a sorted address set without per-member
+derived from owner/spender. Members are a unique address sequence without per-member
 positions; each still originates from a validated nonzero Transfer log. The
 set's canonical boundary is the checkpoint genesis and progress. One loop owns
-its relationship maps; failed
-batches never update progress. Network retries preserve that prefix, while
-reorgs fail closed. The checkpoint writer streams sorted records and uses an
+its relationship maps and slices. Logs are ordered by block number and log index;
+batch-local maps deduplicate and slices retain first occurrences. Only after full
+batch validation and the reorg check are those slices appended to the checkpoint
+and progress advanced. Network retries preserve that prefix, while
+reorgs fail closed. The checkpoint writer streams records in saved order and uses an
 exclusive output lock. Migration never invokes RPC or starts synchronization.
+Readers reject duplicates using maps; the absence of per-record event positions
+means first-occurrence order is a synchronizer guarantee, not a reader check.
 
 The frozen file corpus checks the current compact v1 encoding. Code-hash sorting
 was removed in place: the format stays at v1 without backward compatibility. Legacy

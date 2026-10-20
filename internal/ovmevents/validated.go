@@ -33,7 +33,7 @@ func ownValidated(ctx context.Context, d *Document) (*Validated, error) {
 	return &Validated{document: d, digest: digest}, nil
 }
 
-// Identity returns the source binding and the precomputed normalized digest.
+// Identity returns the source binding and the precomputed order-sensitive digest.
 func (v *Validated) Identity() (common.Hash, Position, common.Hash, error) {
 	if v == nil || v.document == nil {
 		return common.Hash{}, Position{}, common.Hash{}, errors.New("OVM events are required")

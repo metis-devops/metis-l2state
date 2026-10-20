@@ -29,7 +29,7 @@ func TestFrozenCheckpointV1(t *testing.T) {
 	// Independently calculated from the v1 length-framed records, with an empty
 	// value for each member address.
 	if d.IndexDigest() != common.HexToHash("0x86dd1a56c01a01a1e81c5c7e6c06535f619ceead2e72a198c3d61f97c18711ab") {
-		t.Fatal("normalized index digest changed")
+		t.Fatal("checkpoint sequence digest changed")
 	}
 	a := d.Allowances[0]
 	if AllowanceKey(a.Owner, a.Spender) != common.HexToHash("0xbd5f1d126b3cc81f576b3819604a11afeec618a5780643f64f54c80b19f2f88e") {
@@ -92,39 +92,35 @@ func TestAllowanceTupleStrictness(t *testing.T) {
 	}
 }
 
-func TestAllowanceDerivedOrdering(t *testing.T) {
+func TestAllowanceSequence(t *testing.T) {
 	d := sample()
 	a, b := d.Allowances[0].Owner, d.Allowances[0].Spender
 	d.Allowances = []Allowance{{a, b}, {b, a}, {a, a}, {b, b}}
-	original := slices.Clone(d.Allowances)
-	d.Sort()
 	check(t, d.Validate())
-	for _, v := range original {
-		if !slices.Contains(d.Allowances, v) {
-			t.Fatal("sort detached a relationship from its key")
-		}
+	var original bytes.Buffer
+	check(t, Encode(&original, d))
+	got, err := Decode(t.Context(), bytes.NewReader(original.Bytes()))
+	check(t, err)
+	if !slices.Equal(got.Allowances, d.Allowances) || got.IndexDigest() != d.IndexDigest() {
+		t.Fatal("allowance sequence round trip changed evidence")
 	}
-	var canonical bytes.Buffer
-	check(t, Encode(&canonical, d))
 	digest := d.IndexDigest()
 	slices.Reverse(d.Allowances)
+	var reordered bytes.Buffer
+	check(t, Encode(&reordered, d))
+	got, err = Decode(t.Context(), bytes.NewReader(reordered.Bytes()))
+	check(t, err)
+	if !slices.Equal(got.Allowances, d.Allowances) || got.IndexDigest() != d.IndexDigest() {
+		t.Fatal("reversed allowance sequence was not preserved")
+	}
+	if bytes.Equal(original.Bytes(), reordered.Bytes()) || d.IndexDigest() == digest {
+		t.Fatal("reordering did not change checkpoint and digest")
+	}
+	d.Allowances = append(d.Allowances, d.Allowances[0])
 	raw, err := json.Marshal(d)
 	check(t, err)
 	if _, err := Decode(t.Context(), bytes.NewReader(raw)); err == nil {
-		t.Fatal("accepted allowances out of derived-key order")
-	}
-	d.Sort()
-	var reordered bytes.Buffer
-	check(t, Encode(&reordered, d))
-	if !bytes.Equal(canonical.Bytes(), reordered.Bytes()) || d.IndexDigest() != digest {
-		t.Fatal("input ordering changed checkpoint or digest")
-	}
-	d.Allowances = append(d.Allowances, d.Allowances[0])
-	d.Sort()
-	raw, err = json.Marshal(d)
-	check(t, err)
-	if _, err := Decode(t.Context(), bytes.NewReader(raw)); err == nil {
-		t.Fatal("accepted duplicate relationship")
+		t.Fatal("accepted nonadjacent duplicate relationship")
 	}
 }
 
@@ -132,11 +128,7 @@ func TestMemberAddressSet(t *testing.T) {
 	a, b := common.HexToAddress("0x01"), common.HexToAddress("0x02")
 	d := sample()
 	d.Members = []common.Address{b, a, {}}
-	d.Sort()
 	check(t, d.Validate())
-	if !slices.Equal(d.Members, []common.Address{{}, a, b}) {
-		t.Fatal("members are not sorted by address")
-	}
 	var encoded bytes.Buffer
 	check(t, Encode(&encoded, d))
 	got, err := Decode(t.Context(), bytes.NewReader(encoded.Bytes()))
@@ -144,9 +136,21 @@ func TestMemberAddressSet(t *testing.T) {
 	if !slices.Equal(got.Members, d.Members) || got.IndexDigest() != d.IndexDigest() {
 		t.Fatal("address set round trip changed evidence")
 	}
+	digest := d.IndexDigest()
+	slices.Reverse(d.Members)
+	var reordered bytes.Buffer
+	check(t, Encode(&reordered, d))
+	got, err = Decode(t.Context(), bytes.NewReader(reordered.Bytes()))
+	check(t, err)
+	if !slices.Equal(got.Members, d.Members) || got.IndexDigest() != d.IndexDigest() {
+		t.Fatal("reversed member sequence was not preserved")
+	}
+	if bytes.Equal(encoded.Bytes(), reordered.Bytes()) || d.IndexDigest() == digest {
+		t.Fatal("reordering members did not change checkpoint and digest")
+	}
 	for name, members := range map[string]any{
 		"duplicate":       []common.Address{a, a},
-		"unordered":       []common.Address{b, a},
+		"nonadjacent":     []common.Address{a, b, a},
 		"null-array":      nil,
 		"null-address":    []any{nil},
 		"short-address":   []string{"0x01"},
@@ -182,6 +186,27 @@ func TestMemberSetDigestBindsIdentityAndAddresses(t *testing.T) {
 				t.Fatal("digest did not bind changed evidence")
 			}
 		})
+	}
+}
+
+func TestSequenceDigestIgnoresJSONFormatting(t *testing.T) {
+	d := sample()
+	a, b := d.Allowances[0].Owner, d.Allowances[0].Spender
+	d.Allowances = append(d.Allowances, Allowance{b, a})
+	d.Members = []common.Address{b, a}
+	var streamed bytes.Buffer
+	check(t, Encode(&streamed, d))
+	compact, err := json.Marshal(d)
+	check(t, err)
+	if bytes.Equal(streamed.Bytes(), compact) {
+		t.Fatal("test requires distinct JSON encodings")
+	}
+	for _, raw := range [][]byte{streamed.Bytes(), compact} {
+		got, err := Decode(t.Context(), bytes.NewReader(raw))
+		check(t, err)
+		if got.IndexDigest() != d.IndexDigest() {
+			t.Fatal("JSON formatting changed sequence digest")
+		}
 	}
 }
 

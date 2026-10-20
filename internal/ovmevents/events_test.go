@@ -189,11 +189,11 @@ func TestSyncResumeTargetAndSemantics(t *testing.T) {
 	}
 }
 func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
-	for _, name := range []string{"duplicate", "removed", "height", "hash", "topics", "unexpected-topic", "padding", "data", "contract", "txhash", "reorg", "parent"} {
+	for _, name := range []string{"duplicate", "removed", "height", "hash", "topics", "unexpected-topic", "padding", "data", "contract", "txhash", "reorg", "parent", "canceled"} {
 		t.Run(name, func(t *testing.T) {
 			b := fakeChain()
 			a := common.HexToAddress("0x01")
-			l := b.event(1, 0, TransferTopic, a, common.Address{}, 1)
+			l := b.event(1, 2, TransferTopic, a, common.Address{}, 1)
 			switch name {
 			case "removed":
 				l.Removed = true
@@ -216,12 +216,21 @@ func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
 			case "parent":
 				b.headers[1].ParentHash = common.Hash{}
 			}
-			b.events = []types.Log{l}
+			b.events = []types.Log{
+				b.event(1, 0, ApprovalTopic, a, common.Address{}, 1),
+				b.event(1, 1, TransferTopic, common.Address{}, a, 1),
+				l,
+			}
 			if name == "duplicate" {
 				b.events = append(b.events, l)
 			}
 			if name == "reorg" {
 				b.onLogs = func(uint64, uint64) error { b.headers[1].Extra = []byte{1}; return nil }
+			}
+			ctx, cancel := context.WithCancel(t.Context())
+			defer cancel()
+			if name == "canceled" {
+				b.onLogs = func(uint64, uint64) error { cancel(); return nil }
 			}
 			s := &synchronizer{rpc: b, doc: New("1088", b.headers[0].Hash()), allowances: map[common.Hash]Allowance{}, members: map[common.Address]struct{}{}}
 			if name == "height" {
@@ -230,10 +239,10 @@ func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
 				}
 				return
 			}
-			if err := s.batch(t.Context(), 0, 1); err == nil {
+			if err := s.batch(ctx, 0, 1); err == nil {
 				t.Fatal("accepted malformed batch")
 			}
-			if s.haveProgress || len(s.members) != 0 || len(s.doc.Members) != 0 {
+			if s.haveProgress || s.dirty || s.doc.Progress != (Position{}) || len(s.members) != 0 || len(s.doc.Members) != 0 || len(s.allowances) != 0 || len(s.doc.Allowances) != 0 {
 				t.Fatal("partial commit")
 			}
 		})

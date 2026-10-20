@@ -118,7 +118,6 @@ func TestMemberSetRetainsEligibilityAtLaterCheckpoint(t *testing.T) {
 	})
 	d.Progress = ovmevents.Position{BlockNumber: 2, BlockHash: hash}
 	d.Members = append(d.Members, ordinary)
-	d.Sort()
 	o := f.options(filepath.Join(t.TempDir(), "state"))
 	must(t, ovmevents.Save(f.eventPath(), d))
 	_, err = Migrate(t.Context(), o)
