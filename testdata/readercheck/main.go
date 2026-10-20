@@ -3,7 +3,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -11,6 +10,7 @@ import (
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
+	"github.com/metis-devops/metis-l2state/internal/strictio"
 	"github.com/metis-devops/metis-l2state/statefile"
 )
 
@@ -72,5 +72,5 @@ func run() (retErr error) {
 		return err
 	}
 	d.Root = s.FinalStateRoot
-	return json.NewEncoder(os.Stdout).Encode(d)
+	return strictio.WriteJSON(os.Stdout, d)
 }

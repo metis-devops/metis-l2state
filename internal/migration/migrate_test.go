@@ -5,7 +5,7 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/binary"
-	"encoding/json"
+	jsonv1 "encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -375,7 +375,8 @@ func writeAudit(t *testing.T, f fixture, delta uint64) string {
 	t.Helper()
 	supply := fmt.Sprint(165 - delta)
 	a := ovmAuditSummary{Version: 1, Identity: ovmAuditIdentity{Version: 1, Genesis: f.genesis.Hash(), ConfigHash: common.HexToHash("0x01"), WitnessHash: common.HexToHash("0x02"), To: 1, ToHash: f.header.Hash()}, ClientVersion: "test", From: 1, VerifiedBlocks: 1, Genesis: ovmAuditScan{Root: f.genesis.Root, CodeHash: f.ovmCode, BalanceSlots: 5, Balances: supply, Supply: supply, Difference: "0"}, Target: ovmAuditScan{Root: f.header.Root, CodeHash: f.ovmCode, BalanceSlots: 5, Balances: "165", Supply: supply, Difference: fmt.Sprint(delta)}, Totals: ovmAuditDelta{Balance: fmt.Sprint(delta), Supply: "0", Difference: fmt.Sprint(delta), Gas: fmt.Sprint(delta), Suicide: "0", Unexplained: "0"}, ExecutionVerified: true, AccountingReconciled: true, IntervalCausesFullyExplained: true, GenesisDifferenceExplained: true}
-	b, err := json.Marshal(a)
+	// Keep the audit producer's v1 encoding as an independent input fixture.
+	b, err := jsonv1.Marshal(a)
 	must(t, err)
 	p := filepath.Join(t.TempDir(), "audit.json")
 	must(t, os.WriteFile(p, b, 0600))

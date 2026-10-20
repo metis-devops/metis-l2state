@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"flag"
 	"fmt"
@@ -13,6 +12,7 @@ import (
 	"syscall"
 
 	"github.com/metis-devops/metis-l2state/internal/migration"
+	"github.com/metis-devops/metis-l2state/internal/strictio"
 	"github.com/metis-devops/metis-l2state/internal/version"
 )
 
@@ -48,7 +48,7 @@ func run(ctx context.Context, args []string, stdout, stderr io.Writer) error {
 		if len(args) != 1 {
 			return errors.New("version accepts no arguments")
 		}
-		return json.NewEncoder(stdout).Encode(struct{ Tool, Version, Geth string }{version.ToolName, version.ToolVersion, version.GethVersion})
+		return strictio.WriteJSON(stdout, struct{ Tool, Version, Geth string }{version.ToolName, version.ToolVersion, version.GethVersion})
 	case "dump":
 		return dumpCommand(ctx, args[1:], stdout, stderr)
 	case "migrate":
@@ -86,7 +86,7 @@ func migrateCommand(ctx context.Context, args []string, stdout, stderr io.Writer
 	if err != nil {
 		return err
 	}
-	return json.NewEncoder(stdout).Encode(result)
+	return strictio.WriteJSON(stdout, result)
 }
 
 func commonFlags(f *flag.FlagSet, compression *string, workers, cache, handles *int) *bool {
@@ -121,5 +121,5 @@ func dumpCommand(ctx context.Context, args []string, stdout, stderr io.Writer) e
 	if err != nil {
 		return err
 	}
-	return json.NewEncoder(stdout).Encode(result)
+	return strictio.WriteJSON(stdout, result)
 }

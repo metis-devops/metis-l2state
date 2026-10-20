@@ -6,7 +6,8 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/binary"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"hash"
@@ -36,8 +37,13 @@ type Position struct {
 
 // Allowance identifies a nested mapping relationship, not its current value.
 type Allowance struct {
-	Owner   common.Address `json:"owner"`
-	Spender common.Address `json:"spender"`
+	Owner   common.Address
+	Spender common.Address
+}
+
+// MarshalJSON encodes the fixed [owner, spender] checkpoint tuple.
+func (a Allowance) MarshalJSON() ([]byte, error) {
+	return json.Marshal([2]common.Address{a.Owner, a.Spender})
 }
 
 // Document is a complete prefix, including empty blocks, starting at genesis.
@@ -167,7 +173,9 @@ func Encode(w io.Writer, d *Document) error {
 
 // Caller owns d and has validated it since its last mutation.
 func encodeValidated(w io.Writer, d *Document) error {
-	e := json.NewEncoder(w)
+	// Framing is written directly to w between encoded values. Hide the
+	// bytes.Buffer fast path, which assumes exclusive access to its storage.
+	e := jsontext.NewEncoder(struct{ io.Writer }{w})
 	fields := []struct {
 		name  string
 		value any
@@ -186,7 +194,7 @@ func encodeValidated(w io.Writer, d *Document) error {
 		if _, err := fmt.Fprintf(w, "%q:", f.name); err != nil {
 			return err
 		}
-		if err := e.Encode(f.value); err != nil {
+		if err := json.MarshalEncode(e, f.value); err != nil {
 			return err
 		}
 	}
@@ -199,7 +207,7 @@ func encodeValidated(w io.Writer, d *Document) error {
 	_, err := io.WriteString(w, "}\n")
 	return err
 }
-func encodeArray[T any](w io.Writer, e *json.Encoder, name string, values []T) error {
+func encodeArray[T any](w io.Writer, e *jsontext.Encoder, name string, values []T) error {
 	if _, err := fmt.Fprintf(w, ",%q:[", name); err != nil {
 		return err
 	}
@@ -209,7 +217,7 @@ func encodeArray[T any](w io.Writer, e *json.Encoder, name string, values []T) e
 				return err
 			}
 		}
-		if err := e.Encode(v); err != nil {
+		if err := json.MarshalEncode(e, v); err != nil {
 			return err
 		}
 	}

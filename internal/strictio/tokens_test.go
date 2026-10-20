@@ -3,7 +3,9 @@ package strictio
 import (
 	"context"
 	"crypto/sha256"
-	"encoding/json"
+	jsonv1 "encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"reflect"
@@ -15,12 +17,16 @@ func TestTokenReaderFragmentationAndRawDigest(t *testing.T) {
 	raw := " \n\t" + `{"escaped":"a\\\"b\u0041", "literal":" white  space ", "n":1234567890123456789,"a":[true,false,null]}` + strings.Repeat(" \n", 1000)
 	for _, chunk := range []int{1, 2, 7, 4096} {
 		hash := sha256.New()
-		d := json.NewDecoder(TokenReader(t.Context(), io.TeeReader(strings.NewReader(raw), hash), 4096, chunk, "test"))
-		d.UseNumber()
-		reference := json.NewDecoder(strings.NewReader(raw))
-		reference.UseNumber()
-		var got, want any
-		if err := d.Decode(&got); err != nil {
+		d := jsontext.NewDecoder(TokenReader(t.Context(), io.TeeReader(strings.NewReader(raw), hash), 4096, chunk, "test"))
+		// Retain v1 as an independent reference for filtering and precision.
+		reference := jsonv1.NewDecoder(strings.NewReader(raw))
+		var got, want struct {
+			Escaped string `json:"escaped"`
+			Literal string `json:"literal"`
+			N       uint64 `json:"n"`
+			A       []any  `json:"a"`
+		}
+		if err := json.UnmarshalDecode(d, &got, json.RejectUnknownMembers(true)); err != nil {
 			t.Fatal(err)
 		}
 		if err := reference.Decode(&want); err != nil {
@@ -29,7 +35,7 @@ func TestTokenReaderFragmentationAndRawDigest(t *testing.T) {
 		if !reflect.DeepEqual(got, want) {
 			t.Fatal("filter changed JSON values")
 		}
-		if _, err := d.Token(); !errors.Is(err, io.EOF) {
+		if _, err := d.ReadToken(); !errors.Is(err, io.EOF) {
 			t.Fatal(err)
 		}
 		expected := sha256.Sum256([]byte(raw))

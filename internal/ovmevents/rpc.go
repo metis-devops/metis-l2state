@@ -1,9 +1,9 @@
 package ovmevents
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -40,7 +40,7 @@ func (r *rpcBackend) chainID(ctx context.Context) (string, error) {
 	return id.ToInt().String(), nil
 }
 func (r *rpcBackend) header(ctx context.Context, tag string) (*types.Header, error) {
-	var raw json.RawMessage
+	var raw jsontext.Value
 	if err := r.call(ctx, &raw, "eth_getBlockByNumber", tag, false); err != nil {
 		return nil, err
 	}
@@ -110,55 +110,35 @@ func (l *rpcLog) UnmarshalJSON(raw []byte) error {
 	}
 	for _, key := range []string{"blockNumber", "blockHash", "transactionHash", "transactionIndex", "logIndex", "removed"} {
 		value, ok := fields[key]
-		if !ok || bytes.Equal(bytes.TrimSpace(value), []byte("null")) {
+		if !ok || value.Kind() == 'n' {
 			return fmt.Errorf("missing RPC log field %s", key)
 		}
 	}
 	return json.Unmarshal(raw, (*types.Log)(l))
 }
 
-// Inspect decoded field names before a map or types.Log can discard ambiguity.
+// json/v2 rejects duplicate names while decoding the field map.
 // Keep unique provider extensions compatible, but require geth's known fields
 // to use their exact names, including its optional blockTimestamp field.
-func rpcLogFields(raw []byte) (map[string]json.RawMessage, error) {
-	d := json.NewDecoder(bytes.NewReader(raw))
-	if err := delim(d, '{'); err != nil {
+func rpcLogFields(raw []byte) (map[string]jsontext.Value, error) {
+	var fields map[string]jsontext.Value
+	if err := json.Unmarshal(raw, &fields); err != nil {
 		return nil, err
 	}
-	fields := make(map[string]json.RawMessage)
-	for d.More() {
-		token, err := d.Token()
-		if err != nil {
-			return nil, err
-		}
-		key, ok := token.(string)
-		if !ok {
-			return nil, errors.New("expected RPC log field name")
-		}
-		if _, exists := fields[key]; exists {
-			return nil, fmt.Errorf("duplicate RPC log field %q", key)
-		}
+	if fields == nil {
+		return nil, errors.New("expected RPC log object")
+	}
+	for key := range fields {
 		if err := canonicalRPCLogField(key); err != nil {
 			return nil, err
 		}
-		var value json.RawMessage
-		if err := d.Decode(&value); err != nil {
-			return nil, err
-		}
-		fields[key] = value
-	}
-	if err := delim(d, '}'); err != nil {
-		return nil, err
-	}
-	if _, err := d.Token(); !errors.Is(err, io.EOF) {
-		return nil, errors.Join(errors.New("trailing RPC log data"), err)
 	}
 	return fields, nil
 }
 
 func canonicalRPCLogField(key string) error {
 	for _, name := range []string{"address", "topics", "data", "blockNumber", "transactionHash", "transactionIndex", "blockHash", "blockTimestamp", "logIndex", "removed"} {
-		// EqualFold also catches the Unicode aliases accepted by encoding/json.
+		// geth's UnmarshalJSON still uses encoding/json, including Unicode folding.
 		if key != name && strings.EqualFold(key, name) {
 			return fmt.Errorf("non-canonical RPC log field %q; expected %q", key, name)
 		}

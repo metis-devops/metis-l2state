@@ -1,10 +1,10 @@
 package migration
 
 import (
-	"bytes"
 	"context"
 	"crypto/sha256"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -72,35 +72,23 @@ type ovmAuditSummary struct {
 // Enforce exact field names, presence, duplicate rejection and non-null values
 // recursively for these small, fixed schemas. Typed decoding checks scalars.
 func auditJSONFields(data []byte, schema reflect.Type) error {
-	d := json.NewDecoder(bytes.NewReader(data))
-	tok, err := d.Token()
-	if err != nil || tok != json.Delim('{') {
+	var values map[string]jsontext.Value
+	if err := json.Unmarshal(data, &values, jsontext.AllowInvalidUTF8(true)); err != nil {
+		return err
+	}
+	if values == nil {
 		return errors.New("OVM audit requires an object")
 	}
 	fields := make(map[string]reflect.StructField, schema.NumField())
 	for f := range schema.Fields() {
 		fields[strings.Split(f.Tag.Get("json"), ",")[0]] = f
 	}
-	seen := make(map[string]bool, len(fields))
-	for d.More() {
-		tok, err := d.Token()
-		if err != nil {
-			return err
-		}
-		name, ok := tok.(string)
-		if !ok {
-			return errors.New("invalid OVM audit field")
-		}
+	for name, raw := range values {
 		f, ok := fields[name]
-		if !ok || seen[name] {
-			return fmt.Errorf("unknown or duplicate OVM audit field %q", name)
+		if !ok {
+			return fmt.Errorf("unknown OVM audit field %q", name)
 		}
-		seen[name] = true
-		var raw json.RawMessage
-		if err := d.Decode(&raw); err != nil {
-			return err
-		}
-		if bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		if raw.Kind() == 'n' {
 			return fmt.Errorf("OVM audit field %s must not be null", name)
 		}
 		fieldType := f.Type
@@ -113,15 +101,8 @@ func auditJSONFields(data []byte, schema reflect.Type) error {
 			}
 		}
 	}
-	if _, err := d.Token(); err != nil {
-		return err
-	}
-	var extra any
-	if err := d.Decode(&extra); !errors.Is(err, io.EOF) {
-		return errors.New("trailing OVM audit data")
-	}
 	for name, f := range fields {
-		if !seen[name] && !strings.Contains(f.Tag.Get("json"), ",omitempty") {
+		if _, ok := values[name]; !ok && !strings.Contains(f.Tag.Get("json"), ",omitempty") {
 			return fmt.Errorf("missing OVM audit field %s", name)
 		}
 	}

@@ -2,7 +2,7 @@ package ovmevents
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/v2"
 	"os"
 	"slices"
 	"strings"
@@ -52,12 +52,41 @@ func TestCheckpointRejectsRemovedFields(t *testing.T) {
 			encoded, err := json.Marshal(value)
 			check(t, err)
 			target := `"version":`
-			if field == "storageKeyHash" {
-				target = `"owner":`
-			}
 			hostile := strings.Replace(string(raw), target, `"`+field+`":`+string(encoded)+`,`+target, 1)
-			if _, err := Decode(t.Context(), strings.NewReader(hostile)); err == nil || !strings.Contains(err.Error(), "unknown or duplicate field") {
+			if _, err := Decode(t.Context(), strings.NewReader(hostile)); err == nil || !strings.Contains(err.Error(), "unknown field") {
 				t.Fatalf("removed field accepted or rejected for wrong reason: %v", err)
+			}
+		})
+	}
+}
+
+func TestAllowanceTupleStrictness(t *testing.T) {
+	d := sample()
+	a := d.Allowances[0]
+	for name, value := range map[string]any{
+		"null":            nil,
+		"empty":           []any{},
+		"missing-spender": []any{a.Owner},
+		"extra-address":   []any{a.Owner, a.Spender, a.Owner},
+		"extra-null":      []any{a.Owner, a.Spender, nil},
+		"null-owner":      []any{nil, a.Spender},
+		"null-spender":    []any{a.Owner, nil},
+		"short-owner":     []any{"0x01", a.Spender},
+		"short-spender":   []any{a.Owner, "0x02"},
+		"numeric-owner":   []any{1, a.Spender},
+		"numeric-spender": []any{a.Owner, 2},
+		"nested-owner":    []any{[]any{a.Owner}, a.Spender},
+		"nested-spender":  []any{a.Owner, []any{a.Spender}},
+		"address":         a.Owner,
+		"old-object":      map[string]any{"owner": a.Owner, "spender": a.Spender},
+		"old-derived-key": map[string]any{"owner": a.Owner, "spender": a.Spender, "storageKeyHash": AllowanceKey(a.Owner, a.Spender)},
+	} {
+		t.Run(name, func(t *testing.T) {
+			doc := map[string]any{"version": d.Version, "chainId": d.ChainID, "genesis": d.Genesis, "progress": d.Progress, "allowances": []any{value}, "members": d.Members}
+			raw, err := json.Marshal(doc)
+			check(t, err)
+			if _, err := Decode(t.Context(), bytes.NewReader(raw)); err == nil {
+				t.Fatal("accepted malformed allowance tuple")
 			}
 		})
 	}

@@ -2,7 +2,7 @@ package main
 
 import (
 	"bytes"
-	"encoding/json"
+	"encoding/json/jsontext"
 	"testing"
 )
 
@@ -12,7 +12,7 @@ func TestCLI(t *testing.T) {
 		if err := run(t.Context(), args, &out, &stderr); err != nil {
 			t.Fatal(err)
 		}
-		if args[0] == "version" && !json.Valid(out.Bytes()) {
+		if args[0] == "version" && !jsontext.Value(out.Bytes()).IsValid() {
 			t.Fatal("invalid result")
 		}
 	}

@@ -454,10 +454,8 @@ func syncEvents(t *testing.T, source string, genesis, head *types.Header, logs [
 			BlockNumber uint64
 			BlockHash   common.Hash
 		}
-		Allowances []struct {
-			Owner, Spender common.Address
-		}
-		Members []common.Address
+		Allowances [][2]common.Address
+		Members    []common.Address
 	}
 	decoder := json.NewDecoder(bytes.NewReader(raw))
 	decoder.DisallowUnknownFields()
@@ -469,7 +467,7 @@ func syncEvents(t *testing.T, source string, genesis, head *types.Header, logs [
 		t.Fatal("RPC index inventory differs from node")
 	}
 	a, m := d.Allowances[0], d.Members[0]
-	if a.Owner != holder || a.Spender != retained || m != retained {
+	if a[0] != holder || a[1] != retained || m != retained {
 		t.Fatal("RPC relationships differ from node index")
 	}
 }

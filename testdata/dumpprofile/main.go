@@ -5,7 +5,9 @@ package main
 
 import (
 	"context"
-	"encoding/json"
+	jsonv1 "encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"flag"
 	"fmt"
@@ -78,7 +80,8 @@ func run() error {
 	if err := errors.Join(dumpErr, stop()); err != nil {
 		return err
 	}
-	return json.NewEncoder(os.Stdout).Encode(struct {
+	// Keep this helper copyable into baseline checkouts without new dependencies.
+	return json.MarshalEncode(jsontext.NewEncoder(os.Stdout), struct {
 		Result         migration.Result
 		AllocatedBytes uint64
 		Mallocs        uint64
@@ -87,7 +90,7 @@ func run() error {
 		HeapAfterBytes uint64
 		MemProfileRate int
 	}{result, after.TotalAlloc - before.TotalAlloc, after.Mallocs - before.Mallocs,
-		after.NumGC - before.NumGC, after.PauseTotalNs - before.PauseTotalNs, after.HeapAlloc, runtime.MemProfileRate})
+		after.NumGC - before.NumGC, after.PauseTotalNs - before.PauseTotalNs, after.HeapAlloc, runtime.MemProfileRate}, jsonv1.DefaultOptionsV1())
 }
 
 func startProfile(mode, dir string, sampleBytes, blockRate, mutexFraction int) (func() error, error) {

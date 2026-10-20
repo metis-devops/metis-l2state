@@ -3,7 +3,9 @@ package ovmevents
 import (
 	"bytes"
 	"context"
-	"encoding/json"
+	jsonv1 "encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"net/http"
@@ -23,7 +25,7 @@ func TestRPCLogRejectsAmbiguousFields(t *testing.T) {
 	l := b.event(0, 0, TransferTopic, common.Address{}, common.Address{}, 1)
 	raw, err := json.Marshal(l)
 	check(t, err)
-	var fields map[string]json.RawMessage
+	var fields map[string]jsontext.Value
 	check(t, json.Unmarshal(raw, &fields))
 	for key, value := range fields {
 		quoted := fmt.Sprintf("%q", key)
@@ -38,26 +40,130 @@ func TestRPCLogRejectsAmbiguousFields(t *testing.T) {
 		} {
 			t.Run(key+"/"+name, func(t *testing.T) {
 				var got rpcLog
-				if err := json.Unmarshal([]byte(input), &got); err == nil {
+				if err := jsonv1.Unmarshal([]byte(input), &got); err == nil {
 					t.Fatal("accepted ambiguous RPC log field")
 				}
 			})
 		}
 	}
-	// encoding/json folds these Unicode characters to ASCII K and S as well.
+	// Keep the v1 entry point used by geth so its decoder cannot mask our
+	// duplicate-name and Unicode alias checks before reaching rpcLog.
 	for _, alias := range []string{"blocKHash", "blockHaſh"} {
 		input := string(raw[:len(raw)-1]) + fmt.Sprintf(",%q:%q}", alias, common.HexToHash("0x99"))
 		var got rpcLog
-		if err := json.Unmarshal([]byte(input), &got); err == nil {
+		if err := jsonv1.Unmarshal([]byte(input), &got); err == nil {
 			t.Fatalf("accepted Unicode case alias %q", alias)
 		}
 	}
 	// Unique provider extensions remain compatible and do not affect log fields.
 	input := string(raw[:len(raw)-1]) + `,"providerExtension":{"removed":true}}`
 	var got rpcLog
-	check(t, json.Unmarshal([]byte(input), &got))
+	check(t, jsonv1.Unmarshal([]byte(input), &got))
 	if got.Removed || got.BlockHash != l.BlockHash {
 		t.Fatal("provider extension affected log identity")
+	}
+}
+
+func TestRPCLogRequiredFields(t *testing.T) {
+	l := fakeChain().event(0, 0, TransferTopic, common.Address{}, common.Address{}, 0)
+	raw, err := json.Marshal(l)
+	check(t, err)
+	// Zero block/transaction/log positions and removed:false are valid when present.
+	var got rpcLog
+	check(t, got.UnmarshalJSON(raw))
+	if got.BlockNumber != 0 || got.TxIndex != 0 || got.Index != 0 || got.Removed {
+		t.Fatal("changed explicit zero positions or removed:false")
+	}
+	for _, key := range []string{
+		"address", "topics", "data", "blockNumber", "blockHash",
+		"transactionHash", "transactionIndex", "logIndex", "removed",
+	} {
+		for _, mode := range []string{"missing", "null"} {
+			t.Run(key+"/"+mode, func(t *testing.T) {
+				var fields map[string]jsontext.Value
+				check(t, json.Unmarshal(raw, &fields))
+				if mode == "missing" {
+					delete(fields, key)
+				} else {
+					fields[key] = jsontext.Value("null")
+				}
+				input, err := json.Marshal(fields)
+				check(t, err)
+				var got rpcLog
+				if err := got.UnmarshalJSON(input); err == nil {
+					t.Fatal("accepted missing or null required field")
+				}
+			})
+		}
+	}
+}
+
+func TestRPCLogJSONSyntax(t *testing.T) {
+	l := fakeChain().event(0, 0, TransferTopic, common.Address{}, common.Address{}, 1)
+	raw, err := json.Marshal(l)
+	check(t, err)
+	prefix := string(raw[:len(raw)-1])
+	for name, input := range map[string]string{
+		"null":                        `null`,
+		"array":                       `[]`,
+		"truncated":                   prefix,
+		"trailing-value":              string(raw) + `{}`,
+		"trailing-garbage":            string(raw) + `x`,
+		"duplicate-extension":         prefix + `,"extra":1,"extra":2}`,
+		"escaped-duplicate-extension": prefix + `,"extra":1,"extr\u0061":2}`,
+		"nested-duplicate":            prefix + `,"extra":{"x":1,"x":2}}`,
+		"invalid-utf8":                prefix + ",\"extra\":\"\xff\"}",
+	} {
+		t.Run(name, func(t *testing.T) {
+			var got rpcLog
+			// Call the hook directly so an outer decoder cannot mask its checks.
+			if err := got.UnmarshalJSON([]byte(input)); err == nil {
+				t.Fatal("accepted invalid or ambiguous JSON")
+			}
+		})
+	}
+	// Exact decoded field names may be escaped, and unique provider extensions
+	// remain opaque even when they contain names used by the log schema.
+	input := strings.Replace(prefix, `"removed":`, `"remov\u0065d":`, 1) +
+		`,"extra":{"removed":true,"number":18446744073709551616}}`
+	var got rpcLog
+	check(t, got.UnmarshalJSON([]byte(input)))
+	if got.Removed || got.BlockHash != l.BlockHash || got.TxHash != l.TxHash {
+		t.Fatal("escaped field or provider extension changed log identity")
+	}
+}
+
+func TestRPCHeaderJSONValidation(t *testing.T) {
+	h := fakeChain().headers[0]
+	raw, err := json.Marshal(h)
+	check(t, err)
+	var fields map[string]jsontext.Value
+	check(t, json.Unmarshal(raw, &fields))
+	for name, input := range map[string]string{
+		"valid":             string(raw),
+		"extension":         string(raw[:len(raw)-1]) + `,"providerExtension":{"value":1}}`,
+		"duplicate":         `{"hash":` + string(fields["hash"]) + `,` + string(raw[1:]),
+		"escaped-duplicate": `{"ha\u0073h":` + string(fields["hash"]) + `,` + string(raw[1:]),
+		"null-hash":         strings.Replace(string(raw), `"hash":`+string(fields["hash"]), `"hash":null`, 1),
+		"case-hash":         strings.Replace(string(raw), `"hash":`, `"Hash":`, 1),
+	} {
+		t.Run(name, func(t *testing.T) {
+			r := rpcFixture(t, func(method string, _ jsontext.Value) any {
+				if method != "eth_getBlockByNumber" {
+					t.Error("unexpected method", method)
+				}
+				return jsontext.Value(input)
+			})
+			got, err := r.header(t.Context(), "0x0")
+			if name == "valid" || name == "extension" {
+				check(t, err)
+				if got.Hash() != h.Hash() {
+					t.Fatal("changed header identity")
+				}
+			} else if err == nil {
+				t.Fatal("accepted ambiguous or invalid header identity")
+			}
+		})
 	}
 }
 
@@ -75,14 +181,14 @@ func TestAmbiguousRPCLogsPreserveCheckpoint(t *testing.T) {
 			raw, err := json.Marshal(l)
 			check(t, err)
 			// The canonical removed:false would overwrite the conflicting value.
-			response := json.RawMessage(`[{` + conflicting + `,` + string(raw[1:]) + `]`)
+			response := jsontext.Value(`[{` + conflicting + `,` + string(raw[1:]) + `]`)
 			var calls atomic.Int32
-			r := rpcFixture(t, func(method string, params json.RawMessage) any {
+			r := rpcFixture(t, func(method string, params jsontext.Value) any {
 				switch method {
 				case "eth_chainId":
 					return "0x440"
 				case "eth_getBlockByNumber":
-					var args []json.RawMessage
+					var args []jsontext.Value
 					check(t, json.Unmarshal(params, &args))
 					if string(args[0]) == `"0x0"` {
 						return b.headers[0]
@@ -109,20 +215,21 @@ func TestAmbiguousRPCLogsPreserveCheckpoint(t *testing.T) {
 	}
 }
 
-func rpcFixture(t *testing.T, respond func(string, json.RawMessage) any) *rpcBackend {
+func rpcFixture(t *testing.T, respond func(string, jsontext.Value) any) *rpcBackend {
 	t.Helper()
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var req struct {
-			ID     json.RawMessage `json:"id"`
-			Method string          `json:"method"`
-			Params json.RawMessage `json:"params"`
+			ID     jsontext.Value `json:"id"`
+			Method string         `json:"method"`
+			Params jsontext.Value `json:"params"`
 		}
-		if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		if err := json.UnmarshalRead(r.Body, &req); err != nil {
 			t.Error(err)
 			return
 		}
 		w.Header().Set("Content-Type", "application/json")
-		if err := json.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": req.ID, "result": respond(req.Method, req.Params)}); err != nil {
+		// Deliberately retain v1 to send duplicate names in hostile RPC fixtures.
+		if err := jsonv1.NewEncoder(w).Encode(map[string]any{"jsonrpc": "2.0", "id": req.ID, "result": respond(req.Method, req.Params)}); err != nil {
 			t.Error(err)
 		}
 	}))
@@ -138,7 +245,7 @@ func TestRPCValidation(t *testing.T) {
 	l := b.event(0, 0, ApprovalTopic, common.Address{}, common.Address{}, 0)
 	for _, name := range []string{"valid", "null-header", "wrong-hash", "wrong-height", "null-logs", "missing-position", "null-position", "malformed-logs"} {
 		t.Run(name, func(t *testing.T) {
-			r := rpcFixture(t, func(method string, params json.RawMessage) any {
+			r := rpcFixture(t, func(method string, params jsontext.Value) any {
 				switch method {
 				case "eth_chainId":
 					return "0x440"

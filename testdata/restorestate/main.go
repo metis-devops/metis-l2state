@@ -8,7 +8,9 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/binary"
-	"encoding/json"
+	jsonv1 "encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"flag"
 	"fmt"
@@ -25,6 +27,7 @@ import (
 	"github.com/ethereum/go-ethereum/trie"
 	"github.com/holiman/uint256"
 	"github.com/metis-devops/metis-l2state/internal/storageword"
+	"github.com/metis-devops/metis-l2state/internal/strictio"
 	"github.com/metis-devops/metis-l2state/statefile"
 	"github.com/syndtr/goleveldb/leveldb"
 	"github.com/syndtr/goleveldb/leveldb/filter"
@@ -48,13 +51,14 @@ func main() {
 
 // blockHeader accepts the numeric quantities used by the supplied block JSON
 // as well as RPC hex quantities, and verifies its declared hash after encoding.
+// Preserve the existing external-fixture decoding semantics with v1 options.
 func blockHeader(path string) ([]byte, error) {
 	b, err := os.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	var fields map[string]json.RawMessage
-	if err := json.Unmarshal(b, &fields); err != nil {
+	var fields map[string]jsontext.Value
+	if err := json.Unmarshal(b, &fields, jsonv1.DefaultOptionsV1()); err != nil {
 		return nil, err
 	}
 	for _, key := range []string{"number", "difficulty", "gasLimit", "gasUsed", "timestamp"} {
@@ -70,16 +74,16 @@ func blockHeader(path string) ([]byte, error) {
 			}
 		}
 	}
-	b, err = json.Marshal(fields)
+	b, err = json.Marshal(fields, jsonv1.DefaultOptionsV1())
 	if err != nil {
 		return nil, err
 	}
 	var h types.Header
-	if err := json.Unmarshal(b, &h); err != nil {
+	if err := json.Unmarshal(b, &h, jsonv1.DefaultOptionsV1()); err != nil {
 		return nil, err
 	}
 	var declared common.Hash
-	if err := json.Unmarshal(fields["hash"], &declared); err != nil {
+	if err := json.Unmarshal(fields["hash"], &declared, jsonv1.DefaultOptionsV1()); err != nil {
 		return nil, err
 	}
 	if h.Number == nil || !h.Number.IsUint64() || h.Hash() != declared {
@@ -205,7 +209,7 @@ func restore(ctx context.Context, dump, preimages, genesis, target, out string) 
 	if err := db.Put([]byte("LastBlock"), hash[:], &opt.WriteOptions{Sync: true}); err != nil {
 		return err
 	}
-	if err := json.NewEncoder(os.Stdout).Encode(struct {
+	if err := strictio.WriteJSON(os.Stdout, struct {
 		HeaderHash common.Hash
 		Number     uint64
 		Summary    statefile.Summary

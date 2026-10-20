@@ -4,12 +4,14 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"io"
 	"math/big"
 	"os"
 	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/ethereum/go-ethereum/common"
@@ -27,6 +29,43 @@ func require(t *testing.T, err error) {
 	t.Helper()
 	if err != nil {
 		t.Fatal(err)
+	}
+}
+
+func TestBlockHeaderRepresentations(t *testing.T) {
+	h := &types.Header{
+		Number: big.NewInt(42), Difficulty: big.NewInt(1),
+		Root: common.HexToHash("0x1234"), GasLimit: 10000000,
+	}
+	raw, err := json.Marshal(h)
+	require(t, err)
+	want, err := rlp.EncodeToBytes(h)
+	require(t, err)
+	var fields map[string]jsontext.Value
+	require(t, json.Unmarshal(raw, &fields))
+	for key, number := range map[string]string{
+		"number": "42", "difficulty": "1", "gasLimit": "10000000", "gasUsed": "0", "timestamp": "0",
+	} {
+		fields[key] = jsontext.Value(number)
+	}
+	numeric, err := json.Marshal(fields)
+	require(t, err)
+	for name, data := range map[string]string{
+		"hex":       string(raw),
+		"numeric":   string(numeric),
+		"case":      strings.Replace(string(raw), `"number":`, `"Number":`, 1),
+		"duplicate": `{"number":"0x2a",` + string(raw[1:]),
+		"extension": string(raw[:len(raw)-1]) + `,"extra":{"x":1,"x":2}}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "header.json")
+			require(t, os.WriteFile(path, []byte(data), 0600))
+			got, err := blockHeader(path)
+			require(t, err)
+			if !bytes.Equal(got, want) {
+				t.Fatal("fixture representation changed header RLP")
+			}
+		})
 	}
 }
 

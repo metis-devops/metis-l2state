@@ -3,13 +3,88 @@ package migration
 import (
 	"context"
 	"crypto/sha256"
-	"encoding/json"
+	"encoding/json/v2"
 	"errors"
 	"os"
 	"path/filepath"
+	"reflect"
 	"strings"
 	"testing"
 )
+
+func TestAllocScalarRepresentations(t *testing.T) {
+	const address = "0x0000000000000000000000000000000000000101"
+	const canonical = `{"` + address + `":{"balance":"0x20000000000001","nonce":"0xffffffffffffffff","code":"0x6000","storage":{"0x01":"0x02"}}}`
+	path := filepath.Join(t.TempDir(), "alloc")
+	must(t, os.WriteFile(path, []byte(canonical), 0600))
+	want, _, err := readAlloc(t.Context(), path)
+	must(t, err)
+	for name, body := range map[string]string{
+		"numeric": `{"` + address + `":{"balance":9007199254740993,"nonce":18446744073709551615,"code":"0x6000","storage":{"0x01":"0x02"}}}`,
+		"escaped": `{"\u0030x0000000000000000000000000000000000000101":{"bal\u0061nce":"\u0030x20000000000001","nonce":"\u0030xffffffffffffffff","code":"\u0030x6000","storage":{"\u0030x01":"\u0030x02"}}}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			must(t, os.WriteFile(path, []byte(body), 0600))
+			got, digest, err := readAlloc(t.Context(), path)
+			must(t, err)
+			if !reflect.DeepEqual(got, want) || digest != sha256.Sum256([]byte(body)) {
+				t.Fatal("alloc values or original-byte digest changed")
+			}
+		})
+	}
+	for name, fields := range map[string]string{
+		"escaped-duplicate": `"nonce":1,"n\u006fnce":2`,
+		"case":              `"Balance":1`,
+		"overflow":          `"nonce":18446744073709551616`,
+		"fraction":          `"balance":1.5`,
+		"exponent":          `"nonce":1e0`,
+		"container":         `"code":[]`,
+		"null-storage":      `"storage":null`,
+		"oversize-code":     `"code":"0x` + strings.Repeat("00", ovmAllocMaxCode+1) + `"`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			must(t, os.WriteFile(path, []byte(`{"`+address+`":{`+fields+`}}`), 0600))
+			if _, _, err := readAlloc(t.Context(), path); err == nil {
+				t.Fatal("accepted invalid alloc")
+			}
+		})
+	}
+}
+
+func TestAuditJSONFieldValidation(t *testing.T) {
+	f := newFixture(t, 0, 1)
+	path := writeAudit(t, f, 1)
+	raw, err := os.ReadFile(path)
+	must(t, err)
+	schema := reflect.TypeFor[ovmAuditSummary]()
+	must(t, auditJSONFields(raw, schema))
+	for name, body := range map[string]string{
+		"missing":           strings.Replace(string(raw), `"version":1,`, "", 1),
+		"case":              strings.Replace(string(raw), `"version":`, `"Version":`, 1),
+		"nested-case":       strings.Replace(string(raw), `"configHash":`, `"ConfigHash":`, 1),
+		"nested-duplicate":  strings.Replace(string(raw), `"identity":{`, `"identity":{"version":1,`, 1),
+		"escaped-duplicate": `{"vers\u0069on":1,` + string(raw[1:]),
+		"unknown":           `{"extra":0,` + string(raw[1:]),
+		"null-optional":     `{"previousDiagnosisDifferenceWei":null,` + string(raw[1:]),
+		"null-required":     strings.Replace(string(raw), `"verifiedBlocks":1`, `"verifiedBlocks":null`, 1),
+		"trailing":          string(raw) + `{}`,
+		"null":              `null`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			if err := auditJSONFields([]byte(body), schema); err == nil {
+				t.Fatal("accepted invalid audit schema")
+			}
+		})
+	}
+	// Existing audit provenance strings use v1's invalid-UTF-8 replacement.
+	body := strings.Replace(string(raw), `"clientVersion":"test"`, "\"clientVersion\":\"\xff\"", 1)
+	must(t, os.WriteFile(path, []byte(body), 0600))
+	got, digest, err := readOVMAuditSummary(t.Context(), path)
+	must(t, err)
+	if got.ClientVersion != "\ufffd" || digest != sha256.Sum256([]byte(body)) {
+		t.Fatal("audit provenance or original-byte digest changed")
+	}
+}
 
 func TestStrictAllocInputs(t *testing.T) {
 	address := "0x0000000000000000000000000000000000000101"

@@ -4,7 +4,8 @@ import (
 	"context"
 	"crypto/sha256"
 	"encoding/hex"
-	"encoding/json"
+	"encoding/json/jsontext"
+	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -23,7 +24,7 @@ const ovmAllocMaxCode = 1 << 20
 
 type allocLoader struct {
 	ctx     context.Context
-	decoder *json.Decoder
+	decoder *jsontext.Decoder
 	patches map[common.Hash]*accountPatch
 }
 
@@ -34,58 +35,60 @@ func readAlloc(ctx context.Context, path string) (patches map[common.Hash]*accou
 	}
 	defer func() { retErr = errors.Join(retErr, f.Close()) }()
 	h := sha256.New()
-	d := json.NewDecoder(strictio.TokenReader(ctx, io.TeeReader(f, h), 6*(2*ovmAllocMaxCode+2)+2, 32<<10, "GenesisAlloc"))
-	d.UseNumber()
+	d := jsontext.NewDecoder(strictio.TokenReader(ctx, io.TeeReader(f, h), 6*(2*ovmAllocMaxCode+2)+2, 32<<10, "GenesisAlloc"), jsontext.AllowInvalidUTF8(true))
 	l := allocLoader{ctx: ctx, decoder: d, patches: make(map[common.Hash]*accountPatch)}
 	if err := l.object(l.account); err != nil {
 		return nil, digest, fmt.Errorf("alloc: %w", err)
 	}
-	if _, err := d.Token(); !errors.Is(err, io.EOF) {
+	if _, err := d.ReadToken(); !errors.Is(err, io.EOF) {
 		return nil, digest, errors.New("trailing alloc data")
 	}
 	return l.patches, common.BytesToHash(h.Sum(nil)), ctx.Err()
 }
 func (l *allocLoader) object(visit func(string) error) error {
-	token, err := l.decoder.Token()
+	token, err := l.decoder.ReadToken()
 	if err != nil {
 		return err
 	}
-	if token != json.Delim('{') {
+	if token.Kind() != '{' {
 		return errors.New("expected alloc object")
 	}
-	for l.decoder.More() {
+	for l.decoder.PeekKind() != '}' {
 		if err := l.ctx.Err(); err != nil {
 			return err
 		}
-		token, err = l.decoder.Token()
+		token, err = l.decoder.ReadToken()
 		if err != nil {
 			return err
 		}
-		key, ok := token.(string)
-		if !ok {
+		if token.Kind() != '"' {
 			return errors.New("invalid alloc key")
 		}
-		if err := visit(key); err != nil {
+		if err := visit(token.String()); err != nil {
 			return err
 		}
 	}
-	token, err = l.decoder.Token()
+	token, err = l.decoder.ReadToken()
 	if err != nil {
 		return err
 	}
-	if token != json.Delim('}') {
+	if token.Kind() != '}' {
 		return errors.New("expected alloc closing brace")
 	}
 	return nil
 }
 func (l *allocLoader) scalar() ([]byte, error) {
-	token, err := l.decoder.Token()
+	token, err := l.decoder.ReadToken()
 	if err != nil {
 		return nil, err
 	}
-	switch token.(type) {
-	case string, json.Number:
-		return json.Marshal(token)
+	switch token.Kind() {
+	case '"':
+		// Keep decoded string escapes compatible with the existing alloc
+		// syntax before handing values to geth's JSON methods.
+		return json.Marshal(token.String(), jsontext.EscapeForHTML(true), jsontext.EscapeForJS(true))
+	case '0':
+		return []byte(token.String()), nil
 	default:
 		return nil, errors.New("expected non-null scalar")
 	}

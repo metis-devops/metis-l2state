@@ -207,7 +207,8 @@ and identity mismatches stop. The loop has one owner and no worker pool.
 
 The v1 checkpoint has exactly six fields: `version` (1), `chainId` (decimal
 string), `genesis`, `progress` (`blockNumber`, `blockHash`), `allowances`
-(`owner`, `spender`) and `members` (an array of address strings such as
+(an array of two-address arrays in fixed `[owner, spender]` order) and
+`members` (an array of address strings such as
 `["0x0000000000000000000000000000000000000001"]`). Members identify senders of
 nonzero Transfers anywhere in the processed prefix; no per-member block position
 is stored. The RPC source, OVM_ETH contract, Transfer/Approval topics and allowance mapping slot 1 are fixed by the implementation, not input
@@ -220,7 +221,12 @@ prefix. Synchronization still validates each log against its canonical block
 header before adding its sender to the set, including repeated senders.
 Readers reject duplicate, missing, unknown or null fields, including the removed
 `source`, `contract`, `allowanceSlot`, `transferTopic`, `approvalTopic` and
-allowance `storageKeyHash` fields. Member objects, including the former
+allowance `storageKeyHash` fields. Each allowance must contain exactly two
+address strings; missing or extra elements, nulls and the former
+`{"owner": "...", "spender": "..."}` objects are rejected.
+Strings must contain valid UTF-8. Address and hash strings use geth's
+fixed-width, hex-prefixed JSON decoding; JSON escapes inside them are rejected.
+Member objects, including the former
 `address`/`blockNumber`/`blockHash` form, are rejected. The format remains v1 with
 no legacy decoder or conversion mode; checkpoints from the earlier schema must
 be rebuilt from RPC into a new file. JSON tokens are bounded while streaming; relationship

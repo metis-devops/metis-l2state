@@ -3,11 +3,11 @@ package main
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 
+	"github.com/metis-devops/metis-l2state/internal/strictio"
 	"github.com/metis-devops/metis-l2state/statefile"
 )
 
@@ -30,5 +30,5 @@ func run() error {
 	if err := errors.Join(verifyErr, f.Close()); err != nil {
 		return err
 	}
-	return json.NewEncoder(os.Stdout).Encode(summary)
+	return strictio.WriteJSON(os.Stdout, summary)
 }
