@@ -2,3 +2,4 @@
 *.test
 *.prof
 .DS_Store
+/fixtures
