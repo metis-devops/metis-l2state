@@ -7,6 +7,7 @@ import (
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"errors"
+	"fmt"
 	"io"
 	"math/big"
 	"os"
@@ -53,9 +54,7 @@ func TestBlockHeaderRepresentations(t *testing.T) {
 	for name, data := range map[string]string{
 		"hex":       string(raw),
 		"numeric":   string(numeric),
-		"case":      strings.Replace(string(raw), `"number":`, `"Number":`, 1),
-		"duplicate": `{"number":"0x2a",` + string(raw[1:]),
-		"extension": string(raw[:len(raw)-1]) + `,"extra":{"x":1,"x":2}}`,
+		"extension": string(raw[:len(raw)-1]) + `,"extra":{"x":1}}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			path := filepath.Join(t.TempDir(), "header.json")
@@ -66,6 +65,199 @@ func TestBlockHeaderRepresentations(t *testing.T) {
 				t.Fatal("fixture representation changed header RLP")
 			}
 		})
+	}
+	for name, data := range map[string]string{
+		"case":              strings.Replace(string(raw), `"number":`, `"Number":`, 1),
+		"case-alias":        `{"Number":"0x2a",` + string(raw[1:]),
+		"optional-case":     `{"Miner":null,` + string(raw[1:]),
+		"hash-alias":        `{"Hash":"` + h.Hash().Hex() + `",` + string(raw[1:]),
+		"duplicate":         `{"number":"0x2a",` + string(raw[1:]),
+		"escaped-duplicate": `{"n\u0075mber":"0x2a",` + string(raw[1:]),
+		"nested-duplicate":  string(raw[:len(raw)-1]) + `,"extra":{"x":1,"x":2}}`,
+		"invalid-utf8":      string(raw[:len(raw)-1]) + ",\"extra\":\"\xff\"}",
+		"trailing":          string(raw) + `{}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "header.json")
+			require(t, os.WriteFile(path, []byte(data), 0600))
+			if _, err := blockHeader(path); err == nil {
+				t.Fatal("accepted invalid header JSON")
+			}
+		})
+	}
+}
+
+func TestBlockHeaderForkFields(t *testing.T) {
+	h := &types.Header{
+		ParentHash: common.HexToHash("0x01"), UncleHash: common.HexToHash("0x02"),
+		Coinbase: common.HexToAddress("0x03"), Root: common.HexToHash("0x04"),
+		TxHash: common.HexToHash("0x05"), ReceiptHash: common.HexToHash("0x06"),
+		Bloom: types.Bloom{7, 8}, Difficulty: big.NewInt(9), Number: big.NewInt(10),
+		GasLimit: 11, GasUsed: 12, Time: 13, Extra: []byte{0x60, 0xff},
+		MixDigest: common.HexToHash("0x14"), Nonce: types.BlockNonce{15, 16},
+		BaseFee:         new(big.Int).Lsh(big.NewInt(1), 200),
+		WithdrawalsHash: new(common.HexToHash("0x17")),
+		BlobGasUsed:     new(uint64(18)), ExcessBlobGas: new(uint64(19)),
+		ParentBeaconRoot: new(common.HexToHash("0x20")), RequestsHash: new(common.HexToHash("0x21")),
+		BlockAccessListHash: new(common.HexToHash("0x22")), SlotNumber: new(^uint64(0)),
+	}
+	for _, absent := range []bool{false, true} {
+		if absent {
+			h.BaseFee, h.WithdrawalsHash, h.BlobGasUsed, h.ExcessBlobGas = nil, nil, nil, nil
+			h.ParentBeaconRoot, h.RequestsHash, h.BlockAccessListHash, h.SlotNumber = nil, nil, nil, nil
+		}
+		raw, err := json.Marshal(h)
+		require(t, err)
+		path := filepath.Join(t.TempDir(), "header.json")
+		require(t, os.WriteFile(path, raw, 0600))
+		got, err := blockHeader(path)
+		require(t, err)
+		want, err := rlp.EncodeToBytes(h)
+		require(t, err)
+		if !bytes.Equal(got, want) {
+			t.Fatal("header fields changed during JSON decoding")
+		}
+	}
+}
+
+func TestBlockHeaderNumericPrecision(t *testing.T) {
+	h := &types.Header{
+		Number: new(big.Int).SetUint64(^uint64(0)), Difficulty: new(big.Int).Lsh(big.NewInt(1), 255),
+		GasLimit: ^uint64(0), GasUsed: 1<<53 + 1, Time: ^uint64(0),
+	}
+	raw, err := json.Marshal(h)
+	require(t, err)
+	var fields map[string]jsontext.Value
+	require(t, json.Unmarshal(raw, &fields))
+	fields["number"], fields["difficulty"] = jsontext.Value(h.Number.String()), jsontext.Value(h.Difficulty.String())
+	fields["gasLimit"], fields["timestamp"] = jsontext.Value(h.Number.String()), jsontext.Value(h.Number.String())
+	fields["gasUsed"] = jsontext.Value("9007199254740993")
+	raw, err = json.Marshal(fields)
+	require(t, err)
+	path := filepath.Join(t.TempDir(), "header.json")
+	require(t, os.WriteFile(path, raw, 0600))
+	got, err := blockHeader(path)
+	require(t, err)
+	want, err := rlp.EncodeToBytes(h)
+	require(t, err)
+	if !bytes.Equal(got, want) {
+		t.Fatal("numeric header lost integer precision")
+	}
+}
+
+func TestBlockHeaderRequiredFields(t *testing.T) {
+	h := &types.Header{Number: big.NewInt(42), Difficulty: big.NewInt(1)}
+	raw, err := json.Marshal(h)
+	require(t, err)
+	for _, key := range []string{
+		"parentHash", "sha3Uncles", "stateRoot", "transactionsRoot", "receiptsRoot",
+		"logsBloom", "difficulty", "number", "gasLimit", "gasUsed", "timestamp", "extraData", "hash",
+	} {
+		for _, missing := range []bool{false, true} {
+			t.Run(fmt.Sprintf("%s/missing=%t", key, missing), func(t *testing.T) {
+				var fields map[string]jsontext.Value
+				require(t, json.Unmarshal(raw, &fields))
+				if missing {
+					delete(fields, key)
+				} else {
+					fields[key] = jsontext.Value("null")
+				}
+				data, err := json.Marshal(fields)
+				require(t, err)
+				path := filepath.Join(t.TempDir(), "header.json")
+				require(t, os.WriteFile(path, data, 0600))
+				if _, err := blockHeader(path); err == nil {
+					t.Fatal("accepted missing or null required field")
+				}
+			})
+		}
+	}
+}
+
+func TestBlockHeaderOptionalFields(t *testing.T) {
+	h := &types.Header{Number: big.NewInt(42), Difficulty: big.NewInt(1)}
+	raw, err := json.Marshal(h)
+	require(t, err)
+	want, err := rlp.EncodeToBytes(h)
+	require(t, err)
+	optional := []string{
+		"miner", "mixHash", "nonce", "baseFeePerGas", "withdrawalsRoot", "blobGasUsed",
+		"excessBlobGas", "parentBeaconBlockRoot", "requestsHash", "blockAccessListHash", "slotNumber",
+	}
+	for _, missing := range []bool{false, true} {
+		t.Run(fmt.Sprintf("missing=%t", missing), func(t *testing.T) {
+			var fields map[string]jsontext.Value
+			require(t, json.Unmarshal(raw, &fields))
+			for _, key := range optional {
+				if missing {
+					delete(fields, key)
+				} else {
+					fields[key] = jsontext.Value("null")
+				}
+			}
+			data, err := json.Marshal(fields)
+			require(t, err)
+			path := filepath.Join(t.TempDir(), "header.json")
+			require(t, os.WriteFile(path, data, 0600))
+			got, err := blockHeader(path)
+			require(t, err)
+			if !bytes.Equal(got, want) {
+				t.Fatal("absent or null optional fields changed header RLP")
+			}
+		})
+	}
+	// Decimal fixture syntax must not leak into optional RPC quantities.
+	for _, key := range []string{"baseFeePerGas", "blobGasUsed", "excessBlobGas", "slotNumber"} {
+		t.Run(key+"/decimal", func(t *testing.T) {
+			var fields map[string]jsontext.Value
+			require(t, json.Unmarshal(raw, &fields))
+			fields[key] = jsontext.Value("1")
+			data, err := json.Marshal(fields)
+			require(t, err)
+			path := filepath.Join(t.TempDir(), "header.json")
+			require(t, os.WriteFile(path, data, 0600))
+			if _, err := blockHeader(path); err == nil || strings.Contains(err.Error(), "hash mismatch") {
+				t.Fatalf("expected rejection before hash check, got %v", err)
+			}
+		})
+	}
+}
+
+func TestBlockHeaderDeclaredHash(t *testing.T) {
+	h := &types.Header{Number: big.NewInt(42), Difficulty: big.NewInt(1)}
+	raw, err := json.Marshal(h)
+	require(t, err)
+	var fields map[string]jsontext.Value
+	require(t, json.Unmarshal(raw, &fields))
+	fields["hash"] = jsontext.Value(`"` + (common.Hash{}).Hex() + `"`)
+	raw, err = json.Marshal(fields)
+	require(t, err)
+	path := filepath.Join(t.TempDir(), "header.json")
+	require(t, os.WriteFile(path, raw, 0600))
+	if _, err := blockHeader(path); err == nil || !strings.Contains(err.Error(), "hash mismatch") {
+		t.Fatalf("expected declared hash mismatch, got %v", err)
+	}
+}
+
+func TestBlockHeaderInvalidQuantities(t *testing.T) {
+	h := &types.Header{Number: big.NewInt(42), Difficulty: big.NewInt(1)}
+	raw, err := json.Marshal(h)
+	require(t, err)
+	for _, key := range []string{"number", "difficulty", "gasLimit", "gasUsed", "timestamp", "baseFeePerGas", "blobGasUsed", "excessBlobGas", "slotNumber"} {
+		for _, value := range []string{`-1`, `1.5`, `1e0`, `"01"`, `"\u0030x01"`, `true`, `[]`, `{}`, strings.Repeat("9", 80), `"0x1` + strings.Repeat("0", 64) + `"`} {
+			t.Run(key+"/"+value, func(t *testing.T) {
+				var fields map[string]jsontext.Value
+				require(t, json.Unmarshal(raw, &fields))
+				fields[key] = jsontext.Value(value)
+				data, err := json.Marshal(fields)
+				require(t, err)
+				path := filepath.Join(t.TempDir(), "header.json")
+				require(t, os.WriteFile(path, data, 0600))
+				if _, err := blockHeader(path); err == nil || strings.Contains(err.Error(), "hash mismatch") {
+					t.Fatalf("expected quantity rejection before hash check, got %v", err)
+				}
+			})
+		}
 	}
 }
 

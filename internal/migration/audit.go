@@ -9,9 +9,7 @@ import (
 	"fmt"
 	"io"
 	"math/big"
-	"reflect"
 	"slices"
-	"strings"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/holiman/uint256"
@@ -69,44 +67,39 @@ type ovmAuditSummary struct {
 	MatchesPreviousDiagnosis     bool             `json:"matchesPreviousDiagnosis,omitempty"`
 }
 
-// Enforce exact field names, presence, duplicate rejection and non-null values
-// recursively for these small, fixed schemas. Typed decoding checks scalars.
-func auditJSONFields(data []byte, schema reflect.Type) error {
-	var values map[string]jsontext.Value
-	if err := json.Unmarshal(data, &values, jsontext.AllowInvalidUTF8(true)); err != nil {
-		return err
-	}
-	if values == nil {
-		return errors.New("OVM audit requires an object")
-	}
-	fields := make(map[string]reflect.StructField, schema.NumField())
-	for f := range schema.Fields() {
-		fields[strings.Split(f.Tag.Get("json"), ",")[0]] = f
-	}
-	for name, raw := range values {
-		f, ok := fields[name]
-		if !ok {
-			return fmt.Errorf("unknown OVM audit field %q", name)
-		}
-		if raw.Kind() == 'n' {
-			return fmt.Errorf("OVM audit field %s must not be null", name)
-		}
-		fieldType := f.Type
-		if fieldType.Kind() == reflect.Pointer {
-			fieldType = fieldType.Elem()
-		}
-		if fieldType.Kind() == reflect.Struct {
-			if err := auditJSONFields(raw, fieldType); err != nil {
-				return fmt.Errorf("%s: %w", name, err)
-			}
+// The streaming callback checks presence and null before handing each value
+// back to v2 for type, exact-name and duplicate validation in the same pass.
+func decodeAuditJSON(data []byte) (ovmAuditSummary, error) {
+	var a ovmAuditSummary
+	required := make(map[jsontext.Pointer]bool)
+	for object, names := range map[string][]string{
+		"": {"version", "identity", "clientVersion", "from", "verifiedBlocks", "genesisState", "targetState", "totals",
+			"executionVerified", "accountingReconciled", "intervalCausesFullyExplained", "unexplainedEvents", "genesisDifferenceExplained"},
+		"/identity":     {"version", "genesis", "configHash", "witnessHash", "to", "toHash", "deSeqBlock", "seqValidHeight", "firstSequencer"},
+		"/genesisState": {"root", "ovmCodeHash", "balanceSlots", "balancesWei", "supplyWei", "differenceWei"},
+		"/targetState":  {"root", "ovmCodeHash", "balanceSlots", "balancesWei", "supplyWei", "differenceWei"},
+		"/totals":       {"balanceDeltaWei", "supplyDeltaWei", "discrepancyDeltaWei", "gasShortfallWei", "legacySelfdestructWei", "unexplainedDeltaWei"},
+	} {
+		for _, name := range names {
+			required[jsontext.Pointer(object+"/"+name)] = true
 		}
 	}
-	for name, f := range fields {
-		if _, ok := values[name]; !ok && !strings.Contains(f.Tag.Get("json"), ",omitempty") {
-			return fmt.Errorf("missing OVM audit field %s", name)
+	fields := json.UnmarshalFromFunc(func(d *jsontext.Decoder, _ any) error {
+		if d.PeekKind() == jsontext.KindNull {
+			return fmt.Errorf("OVM audit field %s must not be null", d.StackPointer())
 		}
+		delete(required, d.StackPointer())
+		// PeekKind does not consume a token, so the default decoder can
+		// continue from the same position, including for geth's wire types.
+		return errors.ErrUnsupported
+	})
+	if err := json.Unmarshal(data, &a, json.WithUnmarshalers(fields), json.RejectUnknownMembers(true)); err != nil {
+		return a, fmt.Errorf("decode OVM audit summary: %w", err)
 	}
-	return nil
+	for path := range required {
+		return a, fmt.Errorf("missing OVM audit field %s", path)
+	}
+	return a, nil
 }
 
 func auditInteger(s string, unsigned bool) (*big.Int, error) {
@@ -196,10 +189,7 @@ func readOVMAuditSummary(ctx context.Context, path string) (summary *ovmAuditSum
 	if err := ctx.Err(); err != nil {
 		return nil, digest, err
 	}
-	if err := auditJSONFields(data, reflect.TypeFor[ovmAuditSummary]()); err != nil {
-		return nil, digest, err
-	}
-	a, err := strictio.DecodeJSON[ovmAuditSummary](data, "OVM audit summary")
+	a, err := decodeAuditJSON(data)
 	if err != nil {
 		return nil, digest, err
 	}

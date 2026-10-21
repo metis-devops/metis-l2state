@@ -38,9 +38,9 @@ type Allowance struct {
 	Spender common.Address
 }
 
-// MarshalJSON encodes the fixed [owner, spender] checkpoint tuple.
-func (a Allowance) MarshalJSON() ([]byte, error) {
-	return json.Marshal([2]common.Address{a.Owner, a.Spender})
+// MarshalJSONTo streams the fixed [owner, spender] checkpoint tuple.
+func (a Allowance) MarshalJSONTo(e *jsontext.Encoder) error {
+	return json.MarshalEncode(e, [2]common.Address{a.Owner, a.Spender})
 }
 
 // Document is a complete prefix, including empty blocks, starting at genesis.

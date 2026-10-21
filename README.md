@@ -166,6 +166,9 @@ Retain-list and alloc inputs cannot supply missing source address preimages.
 Alloc cannot fix invalid source state or change eligibility. An empty account or
 storage object is a no-op; explicit scalar fields or storage entries can create
 an otherwise empty account. Explicit native balance overrides may change totals.
+Alloc balance and nonce use geth's hex-or-decimal decoding, and code uses geth's
+hex-byte decoding; JSON escapes inside these scalar strings are rejected. Object
+keys and storage values use normal JSON string decoding before validation.
 
 The migration does not read node allowance/member indexes or their
 meta/head/ready/disabled markers. Missing or invalid JSON fails without a fallback.
@@ -198,6 +201,11 @@ position and encoding, and the batch endpoint before advancing. All Approvals
 (including zero amount) contribute owner/spender relationships. Only nonzero
 Transfers contribute `from` membership, including burns and transferFrom.
 No current allowance or token balance values are fetched.
+
+RPC headers and logs require exact field names and non-null required fields.
+Unique provider extensions are allowed, but duplicate names (including inside
+extensions), case aliases of known fields and invalid UTF-8 are rejected during
+decoding. Header quantities use RPC hex syntax.
 
 `--batch-size` bounds a batch to 1–10000 blocks (default 1000). Headers are checked
 sequentially; event queries cover the batch. Range-limit responses halve the
@@ -385,6 +393,10 @@ blocks, receipts, genesis state, or a runnable full node. Inputs are read-only;
 an existing destination is rejected and ordinary failures remove the incomplete
 new database. Storage keys are inserted as already-hashed keys. The optional
 `--target` compares the complete target header RLP with the dump's embedded RLP.
+Header JSON uses exact geth field names and required fields. The fixture's
+`number`, `difficulty`, `gasLimit`, `gasUsed` and `timestamp` may also be decimal
+JSON integers; other quantities retain geth's RPC hex syntax. Duplicate names,
+invalid UTF-8 and a mismatched declared header hash are rejected.
 
 ```sh
 go run ./testdata/restorestate --dump fixtures/dump.zstd \

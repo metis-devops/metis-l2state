@@ -5,7 +5,6 @@ package main
 
 import (
 	"context"
-	jsonv1 "encoding/json"
 	"encoding/json/jsontext"
 	"encoding/json/v2"
 	"errors"
@@ -90,7 +89,7 @@ func run() error {
 		HeapAfterBytes uint64
 		MemProfileRate int
 	}{result, after.TotalAlloc - before.TotalAlloc, after.Mallocs - before.Mallocs,
-		after.NumGC - before.NumGC, after.PauseTotalNs - before.PauseTotalNs, after.HeapAlloc, runtime.MemProfileRate}, jsonv1.DefaultOptionsV1())
+		after.NumGC - before.NumGC, after.PauseTotalNs - before.PauseTotalNs, after.HeapAlloc, runtime.MemProfileRate})
 }
 
 func startProfile(mode, dir string, sampleBytes, blockRate, mutexFraction int) (func() error, error) {

@@ -8,14 +8,10 @@ import (
 	"compress/gzip"
 	"context"
 	"encoding/binary"
-	jsonv1 "encoding/json"
-	"encoding/json/jsontext"
-	"encoding/json/v2"
 	"errors"
 	"flag"
 	"fmt"
 	"io"
-	"math/big"
 	"os"
 	"os/signal"
 	"time"
@@ -47,49 +43,6 @@ func main() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
-}
-
-// blockHeader accepts the numeric quantities used by the supplied block JSON
-// as well as RPC hex quantities, and verifies its declared hash after encoding.
-// Preserve the existing external-fixture decoding semantics with v1 options.
-func blockHeader(path string) ([]byte, error) {
-	b, err := os.ReadFile(path)
-	if err != nil {
-		return nil, err
-	}
-	var fields map[string]jsontext.Value
-	if err := json.Unmarshal(b, &fields, jsonv1.DefaultOptionsV1()); err != nil {
-		return nil, err
-	}
-	for _, key := range []string{"number", "difficulty", "gasLimit", "gasUsed", "timestamp"} {
-		v := fields[key]
-		if len(v) > 0 && v[0] != '"' {
-			n, ok := new(big.Int).SetString(string(v), 10)
-			if !ok || n.Sign() < 0 {
-				return nil, fmt.Errorf("invalid %s", key)
-			}
-			fields[key], err = json.Marshal("0x" + n.Text(16))
-			if err != nil {
-				return nil, err
-			}
-		}
-	}
-	b, err = json.Marshal(fields, jsonv1.DefaultOptionsV1())
-	if err != nil {
-		return nil, err
-	}
-	var h types.Header
-	if err := json.Unmarshal(b, &h, jsonv1.DefaultOptionsV1()); err != nil {
-		return nil, err
-	}
-	var declared common.Hash
-	if err := json.Unmarshal(fields["hash"], &declared, jsonv1.DefaultOptionsV1()); err != nil {
-		return nil, err
-	}
-	if h.Number == nil || !h.Number.IsUint64() || h.Hash() != declared {
-		return nil, errors.New("block number/hash mismatch")
-	}
-	return rlp.EncodeToBytes(&h)
 }
 
 type sink struct {

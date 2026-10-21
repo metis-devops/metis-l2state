@@ -142,10 +142,17 @@ func TestRPCHeaderJSONValidation(t *testing.T) {
 	for name, input := range map[string]string{
 		"valid":             string(raw),
 		"extension":         string(raw[:len(raw)-1]) + `,"providerExtension":{"value":1}}`,
+		"escaped-name":      strings.Replace(string(raw), `"number":`, `"num\u0062er":`, 1),
 		"duplicate":         `{"hash":` + string(fields["hash"]) + `,` + string(raw[1:]),
 		"escaped-duplicate": `{"ha\u0073h":` + string(fields["hash"]) + `,` + string(raw[1:]),
 		"null-hash":         strings.Replace(string(raw), `"hash":`+string(fields["hash"]), `"hash":null`, 1),
 		"case-hash":         strings.Replace(string(raw), `"hash":`, `"Hash":`, 1),
+		"case-number":       strings.Replace(string(raw), `"number":`, `"Number":`, 1),
+		"optional-alias":    `{"Miner":null,` + string(raw[1:]),
+		"unicode-alias":     `{"receiptſRoot":null,` + string(raw[1:]),
+		"null-quantity":     strings.Replace(string(raw), `"gasUsed":`+string(fields["gasUsed"]), `"gasUsed":null`, 1),
+		"decimal-quantity":  strings.Replace(string(raw), `"number":`+string(fields["number"]), `"number":0`, 1),
+		"nested-duplicate":  string(raw[:len(raw)-1]) + `,"providerExtension":{"x":1,"x":2}}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			r := rpcFixture(t, func(method string, _ jsontext.Value) any {
@@ -155,7 +162,7 @@ func TestRPCHeaderJSONValidation(t *testing.T) {
 				return jsontext.Value(input)
 			})
 			got, err := r.header(t.Context(), "0x0")
-			if name == "valid" || name == "extension" {
+			if name == "valid" || name == "extension" || name == "escaped-name" {
 				check(t, err)
 				if got.Hash() != h.Hash() {
 					t.Fatal("changed header identity")

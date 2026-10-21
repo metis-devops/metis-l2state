@@ -1,9 +1,9 @@
 package ovmevents
 
 import (
+	"bytes"
 	"context"
 	"encoding/json/jsontext"
-	"encoding/json/v2"
 	"errors"
 	"fmt"
 	"io"
@@ -15,6 +15,7 @@ import (
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/rpc"
+	"github.com/metis-devops/metis-l2state/internal/ethjson"
 )
 
 type backend interface {
@@ -44,21 +45,12 @@ func (r *rpcBackend) header(ctx context.Context, tag string) (*types.Header, err
 	if err := r.call(ctx, &raw, "eth_getBlockByNumber", tag, false); err != nil {
 		return nil, err
 	}
-	var h *types.Header
-	if err := json.Unmarshal(raw, &h); err != nil {
+	h, err := ethjson.DecodeHeader(bytes.NewReader(raw), false)
+	if err != nil {
 		return nil, fmt.Errorf("invalid RPC header: %w", err)
 	}
-	if h == nil || h.Number == nil || !h.Number.IsUint64() || h.Difficulty == nil || h.Root == (common.Hash{}) {
+	if h.Root == (common.Hash{}) {
 		return nil, errors.New("missing or invalid RPC header")
-	}
-	var identity struct {
-		Hash common.Hash `json:"hash"`
-	}
-	if err := json.Unmarshal(raw, &identity); err != nil {
-		return nil, err
-	}
-	if identity.Hash != h.Hash() {
-		return nil, errors.New("RPC header hash mismatch")
 	}
 	if tag != "latest" && hexutil.EncodeUint64(h.Number.Uint64()) != tag {
 		return nil, errors.New("RPC header height mismatch")
@@ -104,44 +96,5 @@ func temporary(err error) bool {
 type rpcLog types.Log
 
 func (l *rpcLog) UnmarshalJSON(raw []byte) error {
-	fields, err := rpcLogFields(raw)
-	if err != nil {
-		return err
-	}
-	for _, key := range []string{"blockNumber", "blockHash", "transactionHash", "transactionIndex", "logIndex", "removed"} {
-		value, ok := fields[key]
-		if !ok || value.Kind() == 'n' {
-			return fmt.Errorf("missing RPC log field %s", key)
-		}
-	}
-	return json.Unmarshal(raw, (*types.Log)(l))
-}
-
-// json/v2 rejects duplicate names while decoding the field map.
-// Keep unique provider extensions compatible, but require geth's known fields
-// to use their exact names, including its optional blockTimestamp field.
-func rpcLogFields(raw []byte) (map[string]jsontext.Value, error) {
-	var fields map[string]jsontext.Value
-	if err := json.Unmarshal(raw, &fields); err != nil {
-		return nil, err
-	}
-	if fields == nil {
-		return nil, errors.New("expected RPC log object")
-	}
-	for key := range fields {
-		if err := canonicalRPCLogField(key); err != nil {
-			return nil, err
-		}
-	}
-	return fields, nil
-}
-
-func canonicalRPCLogField(key string) error {
-	for _, name := range []string{"address", "topics", "data", "blockNumber", "transactionHash", "transactionIndex", "blockHash", "blockTimestamp", "logIndex", "removed"} {
-		// geth's UnmarshalJSON still uses encoding/json, including Unicode folding.
-		if key != name && strings.EqualFold(key, name) {
-			return fmt.Errorf("non-canonical RPC log field %q; expected %q", key, name)
-		}
-	}
-	return nil
+	return ethjson.DecodeLog(bytes.NewReader(raw), (*types.Log)(l))
 }

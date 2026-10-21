@@ -2,10 +2,8 @@ package strictio_test
 
 import (
 	"bytes"
-	jsonv1 "encoding/json"
+	"encoding/json/jsontext"
 	"errors"
-	"io"
-	"reflect"
 	"strings"
 	"testing"
 
@@ -16,73 +14,116 @@ import (
 	"github.com/metis-devops/metis-l2state/internal/strictio"
 )
 
-// These options are intentional wire behavior, not just equivalent JSON values:
-// tools consume the output and callers may use paths with HTML/JS characters.
-func TestWriteJSONMatchesExistingBytes(t *testing.T) {
-	path := "out<&>\u2028\u2029/\xff"
-	for name, value := range map[string]any{
-		"migration": migration.Result{Artifact: path},
-		"sync":      ovmevents.Result{Output: path, Progress: ovmevents.Position{BlockNumber: ^uint64(0)}},
-		"maps": map[string]any{
-			"z": []int(nil), "a": []int{}, "emptyMap": map[string]int{},
-			"nilMap": map[string]int(nil), "path": path,
-			"code": hexutil.Bytes{0x60, 0xff}, "bytes": [2]byte{1, 2},
-		},
-		"hashKeys": map[common.Hash]common.Hash{
-			common.HexToHash("0xff"): common.HexToHash("0x02"),
-			common.HexToHash("0x01"): common.HexToHash("0x03"),
-		},
-		"omitted": struct {
+func TestWriteJSONRepresentation(t *testing.T) {
+	for _, tt := range []struct {
+		name  string
+		value any
+		want  string
+	}{
+		{"text", "out<&>\u2028\u2029", "\"out<&>\u2028\u2029\"\n"},
+		{"omitted", struct {
 			Flag  bool   `json:"flag,omitempty"`
 			Count uint64 `json:"count,omitempty"`
 			Data  []byte `json:"data"`
-		}{},
+			Empty []int  `json:"empty,omitempty"`
+			Zero  int    `json:"zero,omitzero"`
+		}{}, `{"flag":false,"count":0,"data":""}` + "\n"},
 	} {
-		t.Run(name, func(t *testing.T) {
-			var want, got bytes.Buffer
-			if err := jsonv1.NewEncoder(&want).Encode(value); err != nil {
+		t.Run(tt.name, func(t *testing.T) {
+			var got bytes.Buffer
+			if err := strictio.WriteJSON(&got, tt.value); err != nil {
 				t.Fatal(err)
 			}
-			if err := strictio.WriteJSON(&got, value); err != nil {
-				t.Fatal(err)
-			}
-			if !bytes.Equal(got.Bytes(), want.Bytes()) {
-				t.Fatalf("output changed:\ngot  %q\nwant %q", got.Bytes(), want.Bytes())
+			if got.String() != tt.want {
+				t.Fatalf("got %q, want %q", got.String(), tt.want)
 			}
 		})
 	}
 }
 
-func TestDecodeJSONPreservesTypedSemantics(t *testing.T) {
+// Map member order is unspecified; compare canonical JSON while still checking
+// the values' wire representations and the report's terminating newline.
+func TestWriteJSONMaps(t *testing.T) {
+	for _, tt := range []struct {
+		name  string
+		value any
+		want  string
+	}{
+		{"maps", map[string]any{
+			"z": []int(nil), "a": []int{}, "emptyMap": map[string]int{},
+			"nilMap": map[string]int(nil), "code": hexutil.Bytes{0x60, 0xff}, "bytes": [2]byte{1, 2},
+		}, `{"a":[],"bytes":"AQI=","code":"0x60ff","emptyMap":{},"nilMap":{},"z":[]}` + "\n"},
+		{"hashKeys", map[common.Hash]common.Hash{
+			common.HexToHash("0xff"): common.HexToHash("0x02"),
+			common.HexToHash("0x01"): common.HexToHash("0x03"),
+		}, `{"` + common.HexToHash("0x01").Hex() + `":"` + common.HexToHash("0x03").Hex() + `","` + common.HexToHash("0xff").Hex() + `":"` + common.HexToHash("0x02").Hex() + `"}` + "\n"},
+	} {
+		t.Run(tt.name, func(t *testing.T) {
+			var output bytes.Buffer
+			if err := strictio.WriteJSON(&output, tt.value); err != nil {
+				t.Fatal(err)
+			}
+			if !bytes.HasSuffix(output.Bytes(), []byte("\n")) {
+				t.Fatal("missing terminating newline")
+			}
+			got, want := jsontext.Value(output.Bytes()), jsontext.Value(tt.want)
+			if err := got.Canonicalize(); err != nil {
+				t.Fatal(err)
+			}
+			if err := want.Canonicalize(); err != nil {
+				t.Fatal(err)
+			}
+			if !bytes.Equal(got, want) {
+				t.Fatalf("got %s, want %s", got, want)
+			}
+		})
+	}
+}
+
+func TestWriteJSONRejectsInvalidUTF8(t *testing.T) {
+	for name, value := range map[string]any{
+		"migration": migration.Result{Artifact: "out/\xff"},
+		"sync":      ovmevents.Result{Output: "out/\xff"},
+	} {
+		t.Run(name, func(t *testing.T) {
+			var output bytes.Buffer
+			if err := strictio.WriteJSON(&output, value); err == nil {
+				t.Fatal("accepted invalid UTF-8 output")
+			}
+		})
+	}
+}
+
+func TestDecodeJSONTypedSemantics(t *testing.T) {
 	type document struct {
 		Value string `json:"value"`
 		Count uint64 `json:"count"`
 		Pair  [2]int `json:"pair"`
 	}
+	for raw, want := range map[string]document{
+		`{}`: {}, `null`: {}, `{"value":null}`: {},
+		`{"value":"case","count":18446744073709551615}`: {Value: "case", Count: ^uint64(0)},
+		`{"pair":[1,2]}`:           {Pair: [2]int{1, 2}},
+		`{"v\u0061lue":"escaped"}`: {Value: "escaped"},
+	} {
+		t.Run(raw, func(t *testing.T) {
+			got, err := strictio.DecodeJSON[document]([]byte(raw), "test")
+			if err != nil || got != want {
+				t.Fatalf("got %#v, %v; want %#v", got, err, want)
+			}
+		})
+	}
 	for _, raw := range []string{
-		`{}`, `null`, `{"VALUE":"case","count":18446744073709551615}`,
-		`{"value":"first","value":"last"}`, `{"value":null}`,
-		`{"pair":[1]}`, `{"pair":[1,2,3]}`, `{"v\u0061lue":"escaped"}`,
+		`{"VALUE":"case"}`, `{"value":"first","value":"last"}`,
+		`{"value":"first","v\u0061lue":"last"}`,
+		`{"pair":[1]}`, `{"pair":[1,2,3]}`,
 		"{\"value\":\"\xff\"}", `{"unknown":1}`, `{"count":1.5}`,
 		`{"count":18446744073709551616}`, `{"value":"ok"} {}`, `{"value":`,
 	} {
 		t.Run(raw, func(t *testing.T) {
-			var want document
-			reference := jsonv1.NewDecoder(strings.NewReader(raw))
-			reference.DisallowUnknownFields()
-			wantErr := reference.Decode(&want)
-			if wantErr == nil {
-				var trailing any
-				if err := reference.Decode(&trailing); !errors.Is(err, io.EOF) {
-					wantErr = errors.New("trailing data")
-				}
-			}
-			got, gotErr := strictio.DecodeJSON[document]([]byte(raw), "test")
-			if (gotErr == nil) != (wantErr == nil) {
-				t.Fatalf("changed acceptance: got %v, want %v", gotErr, wantErr)
-			}
-			if gotErr == nil && !reflect.DeepEqual(got, want) {
-				t.Fatalf("changed decoded value: got %#v, want %#v", got, want)
+			_, err := strictio.DecodeJSON[document]([]byte(raw), "test")
+			if err == nil || !strings.Contains(err.Error(), "decode test:") {
+				t.Fatalf("expected labeled decoding error, got %v", err)
 			}
 		})
 	}

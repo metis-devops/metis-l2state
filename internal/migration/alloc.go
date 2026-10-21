@@ -35,7 +35,7 @@ func readAlloc(ctx context.Context, path string) (patches map[common.Hash]*accou
 	}
 	defer func() { retErr = errors.Join(retErr, f.Close()) }()
 	h := sha256.New()
-	d := jsontext.NewDecoder(strictio.TokenReader(ctx, io.TeeReader(f, h), 6*(2*ovmAllocMaxCode+2)+2, 32<<10, "GenesisAlloc"), jsontext.AllowInvalidUTF8(true))
+	d := jsontext.NewDecoder(strictio.TokenReader(ctx, io.TeeReader(f, h), 6*(2*ovmAllocMaxCode+2)+2, 32<<10, "GenesisAlloc"))
 	l := allocLoader{ctx: ctx, decoder: d, patches: make(map[common.Hash]*accountPatch)}
 	if err := l.object(l.account); err != nil {
 		return nil, digest, fmt.Errorf("alloc: %w", err)
@@ -50,10 +50,10 @@ func (l *allocLoader) object(visit func(string) error) error {
 	if err != nil {
 		return err
 	}
-	if token.Kind() != '{' {
+	if token.Kind() != jsontext.KindBeginObject {
 		return errors.New("expected alloc object")
 	}
-	for l.decoder.PeekKind() != '}' {
+	for l.decoder.PeekKind() != jsontext.KindEndObject {
 		if err := l.ctx.Err(); err != nil {
 			return err
 		}
@@ -61,7 +61,7 @@ func (l *allocLoader) object(visit func(string) error) error {
 		if err != nil {
 			return err
 		}
-		if token.Kind() != '"' {
+		if token.Kind() != jsontext.KindString {
 			return errors.New("invalid alloc key")
 		}
 		if err := visit(token.String()); err != nil {
@@ -72,26 +72,20 @@ func (l *allocLoader) object(visit func(string) error) error {
 	if err != nil {
 		return err
 	}
-	if token.Kind() != '}' {
+	if token.Kind() != jsontext.KindEndObject {
 		return errors.New("expected alloc closing brace")
 	}
 	return nil
 }
-func (l *allocLoader) scalar() ([]byte, error) {
-	token, err := l.decoder.ReadToken()
-	if err != nil {
-		return nil, err
+
+// Reject null and containers before geth's JSON methods can buffer a whole
+// object or array. Typed decoding handles scalars directly from the stream.
+func (l *allocLoader) scalar(value any) error {
+	switch l.decoder.PeekKind() {
+	case jsontext.KindNull, jsontext.KindBeginObject, jsontext.KindBeginArray:
+		return errors.New("expected non-null scalar")
 	}
-	switch token.Kind() {
-	case '"':
-		// Keep decoded string escapes compatible with the existing alloc
-		// syntax before handing values to geth's JSON methods.
-		return json.Marshal(token.String(), jsontext.EscapeForHTML(true), jsontext.EscapeForJS(true))
-	case '0':
-		return []byte(token.String()), nil
-	default:
-		return nil, errors.New("expected non-null scalar")
-	}
+	return json.UnmarshalDecode(l.decoder, value)
 }
 func (l *allocLoader) account(key string) error {
 	var addr common.UnprefixedAddress
@@ -124,14 +118,10 @@ func (l *allocLoader) field(p *accountPatch, field string) error {
 	if field != "balance" && field != "nonce" && field != "code" {
 		return errors.New("unknown alloc field")
 	}
-	data, err := l.scalar()
-	if err != nil {
-		return err
-	}
 	switch field {
 	case "balance":
 		var v gethmath.HexOrDecimal256
-		if err := v.UnmarshalJSON(data); err != nil {
+		if err := l.scalar(&v); err != nil {
 			return err
 		}
 		b := (*big.Int)(&v)
@@ -141,14 +131,14 @@ func (l *allocLoader) field(p *accountPatch, field string) error {
 		p.Balance, _ = uint256.FromBig(b)
 	case "nonce":
 		var v gethmath.HexOrDecimal64
-		if err := v.UnmarshalJSON(data); err != nil {
+		if err := l.scalar(&v); err != nil {
 			return err
 		}
 		n := uint64(v)
 		p.Nonce = &n
 	case "code":
 		var v hexutil.Bytes
-		if err := v.UnmarshalJSON(data); err != nil {
+		if err := l.scalar(&v); err != nil {
 			return err
 		}
 		if len(v) > ovmAllocMaxCode {
@@ -176,12 +166,8 @@ func (l *allocLoader) storage(p *accountPatch, key string) error {
 	if _, ok := p.Storage[hash]; ok {
 		return errors.New("duplicate alloc storage key")
 	}
-	raw, err := l.scalar()
-	if err != nil {
-		return err
-	}
 	var text string
-	if err := json.Unmarshal(raw, &text); err != nil {
+	if err := l.scalar(&text); err != nil {
 		return err
 	}
 	value, err := allocWord(text)

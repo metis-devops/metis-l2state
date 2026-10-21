@@ -50,7 +50,7 @@ func checkScalarParity[T uint64 | string | common.Address | common.Hash](t *test
 	wantRejected := raw == "null" || wantErr != nil
 
 	decoder := jsontext.NewDecoder(strings.NewReader("[" + raw + ",true]"))
-	check(t, delim(decoder, '['))
+	check(t, delim(decoder, jsontext.KindBeginArray))
 	gotErr := scalar(decoder, &got)()
 	if (gotErr != nil) != wantRejected {
 		t.Fatalf("%T input %s: error %v, want rejected=%v", got, raw, gotErr, wantRejected)
@@ -64,10 +64,10 @@ func checkScalarParity[T uint64 | string | common.Address | common.Hash](t *test
 	// A scalar read must leave the next array element available.
 	next, err := decoder.ReadToken()
 	check(t, err)
-	if next.Kind() != 't' {
+	if next.Kind() != jsontext.KindTrue {
 		t.Fatalf("scalar consumed the next element: %v", next)
 	}
-	check(t, delim(decoder, ']'))
+	check(t, delim(decoder, jsontext.KindEndArray))
 }
 
 func TestDecodeRequiredFields(t *testing.T) {

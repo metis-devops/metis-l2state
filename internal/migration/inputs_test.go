@@ -3,7 +3,7 @@ package migration
 import (
 	"context"
 	"crypto/sha256"
-	"encoding/json/v2"
+	"encoding/json/jsontext"
 	"errors"
 	"os"
 	"path/filepath"
@@ -20,8 +20,8 @@ func TestAllocScalarRepresentations(t *testing.T) {
 	want, _, err := readAlloc(t.Context(), path)
 	must(t, err)
 	for name, body := range map[string]string{
-		"numeric": `{"` + address + `":{"balance":9007199254740993,"nonce":18446744073709551615,"code":"0x6000","storage":{"0x01":"0x02"}}}`,
-		"escaped": `{"\u0030x0000000000000000000000000000000000000101":{"bal\u0061nce":"\u0030x20000000000001","nonce":"\u0030xffffffffffffffff","code":"\u0030x6000","storage":{"\u0030x01":"\u0030x02"}}}`,
+		"numeric":                  `{"` + address + `":{"balance":9007199254740993,"nonce":18446744073709551615,"code":"0x6000","storage":{"0x01":"0x02"}}}`,
+		"escaped-keys-and-storage": `{"\u0030x0000000000000000000000000000000000000101":{"bal\u0061nce":"0x20000000000001","nonce":"0xffffffffffffffff","code":"0x6000","storage":{"\u0030x01":"\u0030x02"}}}`,
 	} {
 		t.Run(name, func(t *testing.T) {
 			must(t, os.WriteFile(path, []byte(body), 0600))
@@ -51,13 +51,34 @@ func TestAllocScalarRepresentations(t *testing.T) {
 	}
 }
 
+func TestAllocRejectsInvalidJSONText(t *testing.T) {
+	const address = "0x0000000000000000000000000000000000000101"
+	for name, body := range map[string]string{
+		"address":       "{\"\xff\":{}}",
+		"field":         `{"` + address + `":{` + "\"\xff\":0}}",
+		"code":          `{"` + address + `":{"code":` + "\"0x\xff\"}}",
+		"storage-key":   `{"` + address + `":{"storage":{` + "\"\xff\":\"0x00\"}}}",
+		"storage-value": `{"` + address + `":{"storage":{"0x00":` + "\"\xff\"}}}",
+		"surrogate":     `{"` + address + `":{"code":"\ud800"}}`,
+	} {
+		t.Run(name, func(t *testing.T) {
+			path := filepath.Join(t.TempDir(), "alloc")
+			must(t, os.WriteFile(path, []byte(body), 0600))
+			_, _, err := readAlloc(t.Context(), path)
+			if _, ok := errors.AsType[*jsontext.SyntacticError](err); !ok {
+				t.Fatalf("expected JSON syntax rejection before hex decoding, got %v", err)
+			}
+		})
+	}
+}
+
 func TestAuditJSONFieldValidation(t *testing.T) {
 	f := newFixture(t, 0, 1)
 	path := writeAudit(t, f, 1)
 	raw, err := os.ReadFile(path)
 	must(t, err)
-	schema := reflect.TypeFor[ovmAuditSummary]()
-	must(t, auditJSONFields(raw, schema))
+	_, err = decodeAuditJSON(raw)
+	must(t, err)
 	for name, body := range map[string]string{
 		"missing":           strings.Replace(string(raw), `"version":1,`, "", 1),
 		"case":              strings.Replace(string(raw), `"version":`, `"Version":`, 1),
@@ -69,20 +90,19 @@ func TestAuditJSONFieldValidation(t *testing.T) {
 		"null-required":     strings.Replace(string(raw), `"verifiedBlocks":1`, `"verifiedBlocks":null`, 1),
 		"trailing":          string(raw) + `{}`,
 		"null":              `null`,
+		"invalid-utf8":      strings.Replace(string(raw), `"clientVersion":"test"`, "\"clientVersion\":\"\xff\"", 1),
 	} {
 		t.Run(name, func(t *testing.T) {
-			if err := auditJSONFields([]byte(body), schema); err == nil {
+			if _, err := decodeAuditJSON([]byte(body)); err == nil {
 				t.Fatal("accepted invalid audit schema")
 			}
 		})
 	}
-	// Existing audit provenance strings use v1's invalid-UTF-8 replacement.
+	// Invalid provenance text must fail both schema and typed decoding.
 	body := strings.Replace(string(raw), `"clientVersion":"test"`, "\"clientVersion\":\"\xff\"", 1)
 	must(t, os.WriteFile(path, []byte(body), 0600))
-	got, digest, err := readOVMAuditSummary(t.Context(), path)
-	must(t, err)
-	if got.ClientVersion != "\ufffd" || digest != sha256.Sum256([]byte(body)) {
-		t.Fatal("audit provenance or original-byte digest changed")
+	if _, _, err := readOVMAuditSummary(t.Context(), path); err == nil {
+		t.Fatal("accepted invalid UTF-8 audit provenance")
 	}
 }
 
@@ -148,8 +168,7 @@ func FuzzAudit(f *testing.F) {
 		if len(b) > 1<<20 {
 			t.Skip()
 		}
-		var a ovmAuditSummary
-		if err := json.Unmarshal(b, &a); err == nil {
+		if a, err := decodeAuditJSON(b); err == nil {
 			_ = a.validate()
 		}
 	})

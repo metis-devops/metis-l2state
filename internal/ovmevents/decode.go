@@ -14,16 +14,16 @@ import (
 
 // object enforces exact required keys. jsontext rejects duplicate names.
 func object(d *jsontext.Decoder, fields map[string]func() error) error {
-	if err := delim(d, '{'); err != nil {
+	if err := delim(d, jsontext.KindBeginObject); err != nil {
 		return err
 	}
 	count := 0
-	for d.PeekKind() != '}' {
+	for d.PeekKind() != jsontext.KindEndObject {
 		token, err := d.ReadToken()
 		if err != nil {
 			return err
 		}
-		if token.Kind() != '"' {
+		if token.Kind() != jsontext.KindString {
 			return errors.New("expected object key")
 		}
 		key := token.String()
@@ -36,7 +36,7 @@ func object(d *jsontext.Decoder, fields map[string]func() error) error {
 			return fmt.Errorf("%s: %w", key, err)
 		}
 	}
-	if err := delim(d, '}'); err != nil {
+	if err := delim(d, jsontext.KindEndObject); err != nil {
 		return err
 	}
 	if count != len(fields) {
@@ -60,9 +60,9 @@ func delim(d *jsontext.Decoder, want jsontext.Kind) error {
 func scalar[T uint64 | string | common.Address | common.Hash](d *jsontext.Decoder, v *T) func() error {
 	return func() error {
 		switch d.PeekKind() {
-		case 'n':
+		case jsontext.KindNull:
 			return errors.New("null is not allowed")
-		case '{', '[':
+		case jsontext.KindBeginObject, jsontext.KindBeginArray:
 			return errors.New("expected scalar")
 		}
 		return json.UnmarshalDecode(d, v)
@@ -72,7 +72,7 @@ func position(d *jsontext.Decoder, p *Position) error {
 	return object(d, map[string]func() error{"blockNumber": scalar(d, &p.BlockNumber), "blockHash": scalar(d, &p.BlockHash)})
 }
 func allowance(d *jsontext.Decoder, a *Allowance) error {
-	if err := delim(d, '['); err != nil {
+	if err := delim(d, jsontext.KindBeginArray); err != nil {
 		return err
 	}
 	if err := scalar(d, &a.Owner)(); err != nil {
@@ -81,24 +81,24 @@ func allowance(d *jsontext.Decoder, a *Allowance) error {
 	if err := scalar(d, &a.Spender)(); err != nil {
 		return fmt.Errorf("spender: %w", err)
 	}
-	return delim(d, ']')
+	return delim(d, jsontext.KindEndArray)
 }
 func member(d *jsontext.Decoder, address *common.Address) error {
 	return scalar(d, address)()
 }
 func array[T any](d *jsontext.Decoder, values *[]T, read func(*jsontext.Decoder, *T) error) error {
-	if err := delim(d, '['); err != nil {
+	if err := delim(d, jsontext.KindBeginArray); err != nil {
 		return err
 	}
 	*values = []T{}
-	for d.PeekKind() != ']' {
+	for d.PeekKind() != jsontext.KindEndArray {
 		var v T
 		if err := read(d, &v); err != nil {
 			return err
 		}
 		*values = append(*values, v)
 	}
-	return delim(d, ']')
+	return delim(d, jsontext.KindEndArray)
 }
 
 // Decode streams records and rejects ambiguous JSON before typed decoding.
