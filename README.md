@@ -195,6 +195,13 @@ its target. Without a target it continues polling. SIGINT/SIGTERM saves the last
 fully validated batch and returns cancellation (nonzero exit). A forced kill may
 lose unflushed work; restart replays it from the last checkpoint.
 
+Progress starts immediately and identifies checkpoint loading, RPC identity checks,
+header validation, event fetching/validation and checkpoint persistence. During
+header validation, progress is reported after a header response whenever at least
+5 seconds have elapsed since the previous update; `height`/`checked` at this stage
+do not indicate a completed or persisted batch. Waiting at the chain head is also
+reported. `--quiet` suppresses these messages.
+
 The RPC must provide headers and complete historical `eth_getLogs` results from
 block 0. The tool validates each header's hash, height and parent, every event's
 position and encoding, and the batch endpoint before advancing. All Approvals
@@ -212,6 +219,12 @@ sequentially; event queries cover the batch. Range-limit responses halve the
 range; a failing single-block range stops. Transient network errors, rate limits
 and timeouts retry with 1–30 second backoff. Unsupported methods, malformed data
 and identity mismatches stop. The loop has one owner and no worker pool.
+`--rpc-timeout` bounds connection setup and each individual RPC request, not an
+entire batch. A default batch makes 1000 sequential header requests before fetching
+events, so public RPC latency can make the first completed batch take many minutes.
+For a short connectivity check, use a separate output with `--to-block 9
+--batch-size 10`; reducing batch size shortens time to the first checkpoint but
+does not reduce the total number of header requests for a full sync.
 
 The v1 checkpoint has exactly six fields: `version` (1), `chainId` (decimal
 string), `genesis`, `progress` (`blockNumber`, `blockHash`), `allowances`

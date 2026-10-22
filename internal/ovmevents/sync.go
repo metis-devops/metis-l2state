@@ -56,19 +56,37 @@ func Sync(ctx context.Context, o Options) (result Result, retErr error) {
 	if err := o.validate(); err != nil {
 		return result, err
 	}
+	log := progressLogger(o.Progress)
+	target := "follow-head"
+	if o.ToBlock != nil {
+		target = fmt.Sprint(*o.ToBlock)
+	}
+	log.Info("Starting OVM event sync", "target", target, "batch_size", o.BatchSize, "rpc_timeout", o.RPCTimeout)
 	path, lock, err := lockOutput(o.Output)
 	if err != nil {
 		return result, err
 	}
 	defer func() { retErr = errors.Join(retErr, lock.Close()) }()
 	o.Output = path
-	client, err := rpc.DialContext(ctx, o.RPCURL)
+	log.Info("Connecting to RPC")
+	dialCtx, cancel := context.WithTimeout(ctx, o.RPCTimeout)
+	client, err := rpc.DialContext(dialCtx, o.RPCURL)
+	cancel()
 	if err != nil {
 		return result, err
 	}
 	defer client.Close()
 	return synchronize(ctx, o, &rpcBackend{client: client, timeout: o.RPCTimeout}, Save)
 }
+
+func progressLogger(out io.Writer) *slog.Logger {
+	if out == nil {
+		out = io.Discard
+	}
+	return slog.New(slog.NewTextHandler(out, nil))
+}
+
+const progressInterval = 5 * time.Second
 
 type synchronizer struct {
 	o                   Options
@@ -77,17 +95,14 @@ type synchronizer struct {
 	log                 *slog.Logger
 	doc                 *Document
 	haveProgress, dirty bool
+	waiting             bool
 	lastFlush           time.Time
 	allowances          map[common.Hash]Allowance
 	members             map[common.Address]struct{}
 }
 
 func synchronize(ctx context.Context, o Options, b backend, save func(string, *Document) error) (result Result, retErr error) {
-	out := o.Progress
-	if out == nil {
-		out = io.Discard
-	}
-	s := &synchronizer{o: o, rpc: b, save: save, log: slog.New(slog.NewTextHandler(out, nil)), lastFlush: time.Now(), allowances: make(map[common.Hash]Allowance), members: make(map[common.Address]struct{})}
+	s := &synchronizer{o: o, rpc: b, save: save, log: progressLogger(o.Progress), lastFlush: time.Now(), allowances: make(map[common.Hash]Allowance), members: make(map[common.Address]struct{})}
 	if err := s.restore(ctx); err != nil {
 		return result, err
 	}
@@ -97,17 +112,21 @@ func synchronize(ctx context.Context, o Options, b backend, save func(string, *D
 			retErr = errors.Join(retErr, s.flush())
 		}
 	}()
+	s.log.Info("Checking RPC chain identity")
 	if err := s.retry(ctx, func() error { return s.identify(ctx) }); err != nil {
 		return result, err
 	}
+	s.log.Info("RPC chain identified", "chain_id", s.doc.ChainID, "genesis", s.doc.Genesis)
 	if err := s.run(ctx); err != nil {
 		return result, err
 	}
 	return Result{o.Output, s.doc.Progress, len(s.doc.Allowances), len(s.doc.Members)}, nil
 }
 func (s *synchronizer) restore(ctx context.Context) error {
+	s.log.Info("Loading OVM event checkpoint")
 	d, _, err := ReadFile(ctx, s.o.Output)
 	if errors.Is(err, os.ErrNotExist) {
+		s.log.Info("No checkpoint; starting from genesis")
 		return nil
 	}
 	if err != nil {
@@ -124,6 +143,7 @@ func (s *synchronizer) restore(ctx context.Context) error {
 	for _, m := range d.Members {
 		s.members[m] = struct{}{}
 	}
+	s.log.Info("Loaded OVM event checkpoint", "height", d.Progress.BlockNumber, "allowances", len(s.allowances), "members", len(s.members))
 	return nil
 }
 func (s *synchronizer) identify(ctx context.Context) error {
@@ -229,8 +249,13 @@ func (s *synchronizer) advance(ctx context.Context) (bool, error) {
 		to = min(to, *s.o.ToBlock)
 	}
 	if from > to {
+		if !s.waiting {
+			s.log.Info("Waiting for new RPC blocks", "head", head.Number.Uint64(), "next", from, "poll_interval", s.o.PollInterval)
+			s.waiting = true
+		}
 		return false, nil
 	}
+	s.waiting = false
 	if to-from >= s.o.BatchSize {
 		to = from + s.o.BatchSize - 1
 	}
@@ -247,6 +272,9 @@ func (s *synchronizer) advance(ctx context.Context) (bool, error) {
 	}
 }
 func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
+	started := time.Now()
+	lastProgress := started
+	s.log.Info("Checking canonical headers", "from", from, "to", to, "headers", to-from+1)
 	headers := make(map[uint64]common.Hash, int(to-from+1))
 	previous := s.doc.Progress.BlockHash
 	for n := from; ; n++ {
@@ -262,14 +290,20 @@ func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
 		}
 		previous = h.Hash()
 		headers[n] = previous
+		if time.Since(lastProgress) >= progressInterval {
+			s.log.Info("Checking canonical headers", "from", from, "to", to, "height", n, "checked", n-from+1, "headers", to-from+1, "elapsed", time.Since(started))
+			lastProgress = time.Now()
+		}
 		if n == to {
 			break
 		}
 	}
+	s.log.Info("Fetching OVM event logs", "from", from, "to", to)
 	logs, err := s.rpc.logs(ctx, from, to)
 	if err != nil {
 		return err
 	}
+	s.log.Info("Validating OVM event logs", "from", from, "to", to, "logs", len(logs))
 	a, m, err := s.validateLogs(logs, headers)
 	if err != nil {
 		return err
@@ -376,6 +410,7 @@ func (s *synchronizer) flush() error {
 	if !s.dirty {
 		return nil
 	}
+	s.log.Info("Persisting OVM events", "height", s.doc.Progress.BlockNumber)
 	if err := s.save(s.o.Output, s.doc); err != nil {
 		return fmt.Errorf("save checkpoint: %w", err)
 	}

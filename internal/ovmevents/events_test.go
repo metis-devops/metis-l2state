@@ -232,7 +232,7 @@ func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
 			if name == "canceled" {
 				b.onLogs = func(uint64, uint64) error { cancel(); return nil }
 			}
-			s := &synchronizer{rpc: b, doc: New("1088", b.headers[0].Hash()), allowances: map[common.Hash]Allowance{}, members: map[common.Address]struct{}{}}
+			s := &synchronizer{rpc: b, log: progressLogger(nil), doc: New("1088", b.headers[0].Hash()), allowances: map[common.Hash]Allowance{}, members: map[common.Address]struct{}{}}
 			if name == "height" {
 				if err := validateLog(l, map[uint64]common.Hash{1: b.headers[1].Hash()}); err == nil {
 					t.Fatal("bad height")

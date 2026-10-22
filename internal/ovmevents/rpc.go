@@ -31,7 +31,10 @@ type rpcBackend struct {
 func (r *rpcBackend) call(ctx context.Context, result any, method string, args ...any) error {
 	ctx, cancel := context.WithTimeout(ctx, r.timeout)
 	defer cancel()
-	return r.client.CallContext(ctx, result, method, args...)
+	if err := r.client.CallContext(ctx, result, method, args...); err != nil {
+		return fmt.Errorf("%s: %w", method, err)
+	}
+	return nil
 }
 func (r *rpcBackend) chainID(ctx context.Context) (string, error) {
 	var id hexutil.Big
