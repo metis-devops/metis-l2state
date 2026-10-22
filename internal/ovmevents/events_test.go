@@ -189,7 +189,7 @@ func TestSyncResumeTargetAndSemantics(t *testing.T) {
 	}
 }
 func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
-	for _, name := range []string{"duplicate", "removed", "height", "hash", "topics", "unexpected-topic", "padding", "data", "contract", "txhash", "reorg", "parent", "canceled"} {
+	for _, name := range []string{"duplicate", "removed", "height", "hash", "topics", "unexpected-topic", "padding", "data", "contract", "txhash", "reorg", "canceled"} {
 		t.Run(name, func(t *testing.T) {
 			b := fakeChain()
 			a := common.HexToAddress("0x01")
@@ -213,8 +213,6 @@ func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
 				l.Address = a
 			case "txhash":
 				l.TxHash = common.Hash{}
-			case "parent":
-				b.headers[1].ParentHash = common.Hash{}
 			}
 			b.events = []types.Log{
 				b.event(1, 0, ApprovalTopic, a, common.Address{}, 1),
@@ -234,7 +232,7 @@ func TestBatchRejectsMalformedAndDoesNotAdvance(t *testing.T) {
 			}
 			s := &synchronizer{rpc: b, log: progressLogger(nil), doc: New("1088", b.headers[0].Hash()), allowances: map[common.Hash]Allowance{}, members: map[common.Address]struct{}{}}
 			if name == "height" {
-				if err := validateLog(l, map[uint64]common.Hash{1: b.headers[1].Hash()}); err == nil {
+				if err := validateLog(l, 0, 1, b.headers[0].Hash(), b.headers[1].Hash()); err == nil {
 					t.Fatal("bad height")
 				}
 				return
@@ -396,7 +394,7 @@ func TestRepeatedMembersStillValidateLogs(t *testing.T) {
 		bad := b.event(1, 1, TransferTopic, address, common.Address{}, 2)
 		bad.BlockHash = common.HexToHash("0x99")
 		logs = append(logs, bad)
-		if _, _, err := s.validateLogs(logs, map[uint64]common.Hash{1: b.headers[1].Hash()}); err == nil {
+		if _, _, err := s.validateLogs(logs, 0, 3, b.headers[0].Hash(), b.headers[3].Hash()); err == nil {
 			t.Fatalf("deduplication bypassed log validation (restored=%v)", restored)
 		}
 	}

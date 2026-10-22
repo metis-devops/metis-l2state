@@ -2,6 +2,7 @@ package ovmevents
 
 import (
 	"bytes"
+	"cmp"
 	"context"
 	"errors"
 	"fmt"
@@ -85,8 +86,6 @@ func progressLogger(out io.Writer) *slog.Logger {
 	}
 	return slog.New(slog.NewTextHandler(out, nil))
 }
-
-const progressInterval = 5 * time.Second
 
 type synchronizer struct {
 	o                   Options
@@ -272,31 +271,20 @@ func (s *synchronizer) advance(ctx context.Context) (bool, error) {
 	}
 }
 func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
-	started := time.Now()
-	lastProgress := started
-	s.log.Info("Checking canonical headers", "from", from, "to", to, "headers", to-from+1)
-	headers := make(map[uint64]common.Hash, int(to-from+1))
-	previous := s.doc.Progress.BlockHash
-	for n := from; ; n++ {
-		if err := s.flushDue(); err != nil {
-			return err
-		}
-		h, err := s.rpc.header(ctx, hexutil.EncodeUint64(n))
-		if err != nil {
-			return err
-		}
-		if h.Number.Uint64() != n || (n > 0 && h.ParentHash != previous) || (n == 0 && h.Hash() != s.doc.Genesis) {
-			return errors.New("non-contiguous canonical RPC headers")
-		}
-		previous = h.Hash()
-		headers[n] = previous
-		if time.Since(lastProgress) >= progressInterval {
-			s.log.Info("Checking canonical headers", "from", from, "to", to, "height", n, "checked", n-from+1, "headers", to-from+1, "elapsed", time.Since(started))
-			lastProgress = time.Now()
-		}
-		if n == to {
-			break
-		}
+	s.log.Info("Checking canonical batch boundary", "from", from, "to", to)
+	if err := s.flushDue(); err != nil {
+		return err
+	}
+	if err := s.confirm(ctx); err != nil {
+		return err
+	}
+	end, err := s.rpc.header(ctx, hexutil.EncodeUint64(to))
+	if err != nil {
+		return err
+	}
+	endHash := end.Hash()
+	if to == 0 && endHash != s.doc.Genesis {
+		return errors.New("canonical genesis changed (reorg); rebuild into a new file")
 	}
 	s.log.Info("Fetching OVM event logs", "from", from, "to", to)
 	logs, err := s.rpc.logs(ctx, from, to)
@@ -304,16 +292,19 @@ func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
 		return err
 	}
 	s.log.Info("Validating OVM event logs", "from", from, "to", to, "logs", len(logs))
-	a, m, err := s.validateLogs(logs, headers)
+	a, m, err := s.validateLogs(logs, from, to, s.doc.Genesis, endHash)
 	if err != nil {
 		return err
 	}
-	end, err := s.rpc.header(ctx, hexutil.EncodeUint64(to))
+	end, err = s.rpc.header(ctx, hexutil.EncodeUint64(to))
 	if err != nil {
 		return err
 	}
-	if end.Hash() != headers[to] {
+	if end.Hash() != endHash {
 		return errors.New("canonical batch changed (reorg); rebuild into a new file")
+	}
+	if err := s.confirm(ctx); err != nil {
+		return err
 	}
 	if err := ctx.Err(); err != nil {
 		return err
@@ -326,7 +317,7 @@ func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
 		s.members[address] = struct{}{}
 		s.doc.Members = append(s.doc.Members, address)
 	}
-	s.doc.Progress = Position{to, headers[to]}
+	s.doc.Progress = Position{to, endHash}
 	s.haveProgress = true
 	s.dirty = true
 	s.log.Info("Synchronized OVM events", "height", to, "allowances", len(s.allowances), "members", len(s.members))
@@ -335,32 +326,20 @@ func (s *synchronizer) batch(ctx context.Context, from, to uint64) error {
 
 // validateLogs stages unique records in first-occurrence order. Maps only
 // deduplicate; no checkpoint state changes until the entire batch is accepted.
-func (s *synchronizer) validateLogs(logs []types.Log, headers map[uint64]common.Hash) ([]Allowance, []common.Address, error) {
+func (s *synchronizer) validateLogs(logs []types.Log, from, to uint64, genesis, endHash common.Hash) ([]Allowance, []common.Address, error) {
 	var a []Allowance
 	var m []common.Address
 	allowances := make(map[common.Hash]Allowance)
 	members := make(map[common.Address]struct{})
-	slices.SortFunc(logs, func(a, b types.Log) int {
-		if a.BlockNumber < b.BlockNumber {
-			return -1
-		}
-		if a.BlockNumber > b.BlockNumber {
-			return 1
-		}
-		if a.Index < b.Index {
-			return -1
-		}
-		if a.Index > b.Index {
-			return 1
-		}
-		return 0
-	})
+	slices.SortFunc(logs, compareLogPosition)
 	for i, l := range logs {
-		if err := validateLog(l, headers); err != nil {
+		if err := validateLog(l, from, to, genesis, endHash); err != nil {
 			return nil, nil, err
 		}
-		if i > 0 && logs[i-1].BlockNumber == l.BlockNumber && logs[i-1].Index == l.Index {
-			return nil, nil, errors.New("duplicate RPC log position")
+		if i > 0 {
+			if err := validateLogSequence(logs[i-1], l); err != nil {
+				return nil, nil, err
+			}
 		}
 		from, to := common.BytesToAddress(l.Topics[1][12:]), common.BytesToAddress(l.Topics[2][12:])
 		if l.Topics[0] == ApprovalTopic {
@@ -384,9 +363,33 @@ func (s *synchronizer) validateLogs(logs []types.Log, headers map[uint64]common.
 	}
 	return a, m, nil
 }
-func validateLog(l types.Log, headers map[uint64]common.Hash) error {
-	h, ok := headers[l.BlockNumber]
-	if !ok || l.BlockHash != h || l.Removed || l.TxHash == (common.Hash{}) {
+
+func compareLogPosition(a, b types.Log) int {
+	if order := cmp.Compare(a.BlockNumber, b.BlockNumber); order != 0 {
+		return order
+	}
+	return cmp.Compare(a.Index, b.Index)
+}
+
+// validateLogSequence checks adjacent records after sorting by block and log index.
+func validateLogSequence(previous, current types.Log) error {
+	if previous.BlockNumber != current.BlockNumber {
+		return nil
+	}
+	if previous.BlockHash != current.BlockHash {
+		return errors.New("conflicting RPC log block hashes")
+	}
+	if previous.Index == current.Index {
+		return errors.New("duplicate RPC log position")
+	}
+	return nil
+}
+
+func validateLog(l types.Log, from, to uint64, genesis, endHash common.Hash) error {
+	if l.BlockNumber < from || l.BlockNumber > to || l.BlockHash == (common.Hash{}) || l.Removed || l.TxHash == (common.Hash{}) {
+		return errors.New("invalid RPC log position")
+	}
+	if (l.BlockNumber == 0 && l.BlockHash != genesis) || (l.BlockNumber == to && l.BlockHash != endHash) {
 		return errors.New("invalid RPC log position")
 	}
 	if l.Address != Contract || len(l.Topics) != 3 || len(l.Data) != 32 {

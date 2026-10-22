@@ -128,8 +128,8 @@ undo a peak already reached during validation or conversion. Source-code directo
 48 bytes and cached bytecode uses fixed blocks. Address/event indexes, temporary
 conversion jobs, alloc, LevelDB cache, Writer and runtime overhead are additional.
 There is no fixed bytes-per-account/slot or RSS guarantee, automatic spill,
-streaming fallback or process memory cap. Provision memory for the full state;
-see the [measured comparison](docs/benchmarks/README.md). There is no scratch DB
+streaming fallback or process memory cap. Provision memory for the full state.
+There is no scratch DB
 or second complete converted/final state copy. Alloc is merged during output and
 does not overwrite converted values; converted roots/counts remain separate.
 
@@ -196,35 +196,39 @@ fully validated batch and returns cancellation (nonzero exit). A forced kill may
 lose unflushed work; restart replays it from the last checkpoint.
 
 Progress starts immediately and identifies checkpoint loading, RPC identity checks,
-header validation, event fetching/validation and checkpoint persistence. During
-header validation, progress is reported after a header response whenever at least
-5 seconds have elapsed since the previous update; `height`/`checked` at this stage
-do not indicate a completed or persisted batch. Waiting at the chain head is also
-reported. `--quiet` suppresses these messages.
+canonical batch boundary checks, event fetching/validation and checkpoint persistence.
+In-flight phases do not indicate a completed or persisted batch. Waiting at the
+chain head is also reported. `--quiet` suppresses these messages.
 
-The RPC must provide headers and complete historical `eth_getLogs` results from
-block 0. The tool validates each header's hash, height and parent, every event's
-position and encoding, and the batch endpoint before advancing. All Approvals
-(including zero amount) contribute owner/spender relationships. Only nonzero
-Transfers contribute `from` membership, including burns and transferFrom.
-No current allowance or token balance values are fetched.
+The RPC must provide boundary headers and complete historical `eth_getLogs`
+results from block 0. The tool verifies chain identity and the saved checkpoint.
+Each batch attempt, including retries and reduced ranges, checks the existing
+checkpoint and captures the endpoint hash before fetching logs, then rechecks
+both before committing. Queried headers retain strict hash and height validation.
+It does not scan interior headers or verify the range's parent links.
+
+Logs must be within the requested range, have nonzero block/transaction hashes,
+not be removed, and have valid event encoding and unique positions. All logs from
+one block must agree on its hash; genesis and endpoint logs must match their known
+hashes. Interior log hashes are trusted RPC data, not independently checked
+against canonical headers. All Approvals (including zero amount) contribute
+owner/spender relationships. Only nonzero Transfers contribute `from` membership,
+including burns and transferFrom. No current allowance or token balance values
+are fetched.
 
 RPC headers and logs require exact field names and non-null required fields.
 Unique provider extensions are allowed, but duplicate names (including inside
 extensions), case aliases of known fields and invalid UTF-8 are rejected during
 decoding. Header quantities use RPC hex syntax.
 
-`--batch-size` bounds a batch to 1–10000 blocks (default 1000). Headers are checked
-sequentially; event queries cover the batch. Range-limit responses halve the
-range; a failing single-block range stops. Transient network errors, rate limits
-and timeouts retry with 1–30 second backoff. Unsupported methods, malformed data
-and identity mismatches stop. The loop has one owner and no worker pool.
-`--rpc-timeout` bounds connection setup and each individual RPC request, not an
-entire batch. A default batch makes 1000 sequential header requests before fetching
-events, so public RPC latency can make the first completed batch take many minutes.
-For a short connectivity check, use a separate output with `--to-block 9
---batch-size 10`; reducing batch size shortens time to the first checkpoint but
-does not reduce the total number of header requests for a full sync.
+`--batch-size` bounds a batch to 1–10000 blocks (default 1000). Event queries cover
+the batch; header request counts per attempt are constant regardless of block or
+event count. Range-limit responses halve the range; a failing single-block range
+stops. Transient network errors, rate limits and timeouts retry with 1–30 second
+backoff. Unsupported methods, malformed data and identity mismatches stop. The
+loop has one owner and no worker pool. `--rpc-timeout` bounds connection setup and
+each individual RPC request, not an entire batch. For a short connectivity check,
+use a separate output with `--to-block 9 --batch-size 10`.
 
 The v1 checkpoint has exactly six fields: `version` (1), `chainId` (decimal
 string), `genesis`, `progress` (`blockNumber`, `blockHash`), `allowances`
@@ -246,8 +250,8 @@ committed only after all logs and its canonical boundary pass validation.
 Readers use maps to reject duplicates and preserve the supplied sequences;
 without per-record event positions they cannot verify first-occurrence order.
 Genesis and progress bind the entire set to one canonical prefix.
-Synchronization still validates each log against its canonical block header
-before adding its sender to the set, including repeated senders.
+Synchronization applies range, encoding and hash-consistency checks to every log,
+including repeated senders, before deduplication.
 Readers reject duplicate, missing, unknown or null fields, including the removed
 `source`, `contract`, `allowanceSlot`, `transferTopic`, `approvalTopic` and
 allowance `storageKeyHash` fields. Each allowance must contain exactly two
@@ -264,8 +268,9 @@ indexes grow with cardinality, not full storage state.
 An existing file resumes only on the same chain and canonical checkpoint hash.
 A lower target is rejected; an equal target is checked without replay. Any
 observed reorg stops and requires a new output file rebuilt from genesis.
-The JSON is trusted operator input based on RPC log completeness, not a receipt
-root proof. Neither a matching checkpoint nor a checksum proves omitted logs
+The JSON is trusted operator input based on RPC log completeness and interior
+log canonicality, not a receipt root proof. Boundary checks cannot detect an
+inconsistent interior response whose boundary hashes remain unchanged. Neither a matching checkpoint nor a checksum proves omitted logs
 were returned by the provider.
 
 The output parent must exist. A persistent `.lock` sibling prevents cooperating
@@ -429,6 +434,10 @@ outside timing, compares exact bytes and complete summaries, and checks source
 and input immutability. Reconstruction layout and local cache state differ from
 the original node, so these measurements do not establish production performance.
 
-The [latest benchmark report](docs/benchmarks/README.md) includes paired timings,
-CPU, peak RSS, allocation measurements and independent artifact verification.
-Only the latest completed benchmark suite and its raw results are retained.
+The [latest benchmark report](docs/benchmarks/README.md) covers `ovm-event-sync`
+with paired localhost HTTP RPC measurements for empty, sparse and dense event
+histories. `scripts/benchmark_sync.py` runs both sync test binaries compiled with
+the same `sync_benchmark_test.go` harness. Checkpoint byte verification runs
+outside the Go benchmark timer. The report records the exact baseline,
+reproduction instructions and evidence limits. Only the latest completed
+benchmark suite and its raw results are retained.

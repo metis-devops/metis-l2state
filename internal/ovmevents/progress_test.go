@@ -23,31 +23,26 @@ func TestProgressDuringIncompleteBatch(t *testing.T) {
 				ctx, cancel := context.WithCancel(t.Context())
 				defer cancel()
 				inspected := false
-				b.onHeader = func(tag string) error {
-					if tag == "0x1" || tag == "0x2" {
-						time.Sleep(3 * time.Second)
+				b.onLogs = func(uint64, uint64) error {
+					inspected = true
+					time.Sleep(6 * time.Second)
+					text := progress.String()
+					if !strings.Contains(text, "Fetching OVM event logs") || strings.Contains(text, "Synchronized OVM events") || strings.Contains(text, "Checking canonical headers") {
+						t.Fatal("missing or misleading in-flight progress:", text)
 					}
-					if tag == "0x3" && !inspected {
-						inspected = true
-						// Still inside the first batch, before any event query.
-						text := progress.String()
-						if !strings.Contains(text, "checked=3 headers=4") || strings.Contains(text, "Synchronized OVM events") {
-							t.Fatal("missing or misleading in-flight progress:", text)
-						}
-						if len(b.requests) != 0 {
-							t.Fatal("queried events before validating headers")
-						}
-						if _, err := os.Stat(o.Output); !errors.Is(err, os.ErrNotExist) {
-							t.Fatal("incomplete batch was published:", err)
-						}
-						if canceled {
-							cancel()
-							return ctx.Err()
-						}
+					if _, err := os.Stat(o.Output); !errors.Is(err, os.ErrNotExist) {
+						t.Fatal("incomplete batch was published:", err)
+					}
+					if canceled {
+						cancel()
+						return ctx.Err()
 					}
 					return nil
 				}
 				_, err := synchronize(ctx, o, b, Save)
+				if !inspected {
+					t.Fatal("logs not requested")
+				}
 				if canceled {
 					if !errors.Is(err, context.Canceled) {
 						t.Fatal(err)
@@ -58,7 +53,7 @@ func TestProgressDuringIncompleteBatch(t *testing.T) {
 					return
 				}
 				check(t, err)
-				for _, message := range []string{"Checking RPC chain identity", "RPC chain identified", "Fetching OVM event logs", "Validating OVM event logs", "Synchronized OVM events", "Persisted OVM events"} {
+				for _, message := range []string{"Checking canonical batch boundary", "Checking RPC chain identity", "RPC chain identified", "Fetching OVM event logs", "Validating OVM event logs", "Synchronized OVM events", "Persisted OVM events"} {
 					if !strings.Contains(progress.String(), message) {
 						t.Fatal("missing phase:", message)
 					}
